@@ -522,7 +522,7 @@ function renderSchedule(){
   if(!state.schedule.length){list.innerHTML='<div class="schedule-empty">No upcoming events scheduled.</div>';return;}
   list.innerHTML=state.schedule.map(s=>`
     <div class="schedule-item">
-      <div class="sched-date">${s.date}<span class="sched-day">${s.day||''}</span></div>
+      <div class="sched-date">${s.date}</div>
       <div class="sched-info"><h4>${s.title}</h4><p>${s.speaker}</p></div>
       <div class="sched-meta"><div class="sched-time">${s.time}</div><div class="sched-loc">${s.location}</div></div>
     </div>
