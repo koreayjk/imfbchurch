@@ -265,57 +265,6 @@ footer{background:#E8E2D6;padding:80px 48px 40px;border-top:1px solid rgba(154,1
   .yt-admin-item{grid-template-columns:1fr;}
 }
 </style>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-const _sb = window.supabase.createClient('https://slwwzrtvizfxyvugyxgc.supabase.co','sb_publishable_UgeXbVXjHFvccavcMiinag_jYJX3Axu');
-
-async function loadFromSupabase(){
-  try{
-    // 일정
-    const {data:sd,error:se}=await _sb.from('schedule').select('*').order('id');
-    if(sd&&sd.length){state.schedule=sd;renderSchedule();}
-
-    // 유튜브
-    const {data:yd}=await _sb.from('youtube').select('*').order('id');
-    if(yd&&yd.length){state.youtube=yd;renderYoutube();}
-
-    // 교회 정보
-    const {data:id2}=await _sb.from('church_info').select('*');
-    if(id2){
-      const info={};id2.forEach(r=>info[r.key]=r.value);
-      const pn=document.getElementById('pastor-name-display');
-      const pb=document.getElementById('pastor-bio-display');
-      if(pn&&info.pastor_name)pn.textContent=info.pastor_name;
-      if(pb&&info.pastor_bio)pb.textContent=info.pastor_bio;
-    }
-
-    // 사진
-    const {data:pd}=await _sb.from('photos').select('*');
-    if(pd){
-      pd.forEach(p=>{
-        try{
-          const urls=JSON.parse(p.urls||'[]');
-          if(p.type==='hero'&&urls.length){state.heroPhotos=urls;renderHeroCollage();}
-          if(p.type==='gallery'&&urls.length){state.galleryPhotos=urls;renderMainGallery();}
-          if(p.type==='pastor'&&urls[0]){
-            state.pastor=urls[0];
-            const img=document.getElementById('pastor-img-display');
-            if(img){img.src=urls[0];img.style.display='block';}
-          }
-          if(p.type==='strategy'&&urls[0]){
-            state.strategy=urls[0];
-            const img=document.getElementById('strategy-img-display');
-            if(img){img.src=urls[0];img.style.display='block';}
-          }
-        }catch(err){}
-      });
-    }
-  }catch(e){console.error('Supabase error:',e);}
-}
-
-loadFromSupabase();</script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>const _sb=window.supabase.createClient('https://slwwzrtvizfxyvugyxgc.supabase.co','sb_publishable_UgeXbVXjHFvccavcMiinag_jYJX3Axu');</script>
 </head>
 <body>
 
@@ -410,6 +359,7 @@ loadFromSupabase();</script>
   </div>
 </div></div>
 
+
 <!-- BFM 2000 -->
 <div id="bfm-section" style="background:var(--ivory);max-width:100%;padding:72px 48px;border-top:1px solid var(--card-border);">
   <div style="max-width:900px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:40px;flex-wrap:wrap;">
@@ -427,8 +377,6 @@ loadFromSupabase();</script>
     </div>
   </div>
 </div>
-
-
 <!-- VISION DNA -->
 <div id="vision-section">
   <div class="vision-inner">
