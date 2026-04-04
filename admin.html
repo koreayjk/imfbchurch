@@ -53,9 +53,9 @@ html,body{min-height:100vh;background:var(--ivory2);font-family:'Inter',sans-ser
 .photo-slot img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0;}
 .slot-label{display:flex;flex-direction:column;align-items:center;gap:6px;font-size:10px;letter-spacing:2px;color:var(--gold);text-transform:uppercase;opacity:.5;pointer-events:none;z-index:1;}
 .slot-label svg{width:20px;height:20px;stroke:var(--gold);fill:none;}
-.del-photo-btn{position:absolute;top:6px;right:6px;background:rgba(180,40,40,.85);border:none;color:#fff;width:24px;height:24px;cursor:pointer;font-size:12px;display:none;align-items:center;justify-content:center;z-index:2;}
+.del-photo-btn{position:absolute;top:6px;right:6px;background:rgba(180,40,40,.85);border:none;color:#fff;width:24px;height:24px;cursor:pointer;font-size:12px;display:none;align-items:center;justify-content:center;z-index:10;}
 .photo-slot:hover .del-photo-btn{display:flex;}
-.photo-slot input[type="file"]{position:absolute;inset:0;opacity:0;cursor:pointer;z-index:3;}
+.photo-slot input[type="file"]{position:absolute;inset:0;opacity:0;cursor:pointer;z-index:3;}.photo-slot.has-img input[type="file"]{z-index:1;}
 .photo-slot.has-img .slot-label{display:none;}
 
 /* SCHEDULE */
@@ -296,7 +296,7 @@ async function uploadHero(input, i){
     initHeroGrid();
   }catch(e){alert('Upload failed: '+e.message);}
 }
-function delHero(i,e){e&&e.stopPropagation();S.hero[i]=null;initHeroGrid();savePhotoDB('hero',S.hero.filter(Boolean));}
+async function delHero(i,e){e&&e.stopPropagation();S.hero[i]=null;initHeroGrid();try{await savePhotoDB('hero',S.hero.filter(Boolean));}catch(err){console.warn(err);}}
 
 // ── Gallery grid ──
 function initGalleryGrid(){
@@ -320,7 +320,7 @@ async function uploadGallery(input, i){
     initGalleryGrid();
   }catch(e){alert('Upload failed: '+e.message);}
 }
-function delGallery(i,e){e&&e.stopPropagation();S.gallery[i]=null;initGalleryGrid();savePhotoDB('gallery',S.gallery.filter(Boolean));}
+async function delGallery(i,e){e&&e.stopPropagation();S.gallery[i]=null;initGalleryGrid();try{await savePhotoDB('gallery',S.gallery.filter(Boolean));}catch(err){console.warn(err);}}
 
 // ── Single slot (pastor/strategy) ──
 async function uploadSlot(input, type, slotId){
@@ -336,14 +336,14 @@ async function uploadSlot(input, type, slotId){
     slot.classList.add('has-img');
   }catch(e){alert('Upload failed: '+e.message);}
 }
-function deleteSlot(type, slotId, e){
+async function deleteSlot(type, slotId, e){
   e&&e.stopPropagation();
   S[type] = null;
-  savePhotoDB(type, []);
   const slot = document.getElementById(slotId);
   const img = slot.querySelector('img');
   if(img) img.remove();
   slot.classList.remove('has-img');
+  try{ await savePhotoDB(type, []); }catch(err){ console.warn('Delete from DB failed:', err); }
 }
 
 // ── Schedule ──
