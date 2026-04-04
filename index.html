@@ -264,7 +264,11 @@ footer{background:#E8E2D6;padding:80px 48px 40px;border-top:1px solid rgba(154,1
   .schedule-admin-item{grid-template-columns:1fr 1fr;}
   .yt-admin-item{grid-template-columns:1fr;}
 }
+  
 </style>
+  
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>const _sb=window.supabase.createClient('https://slwwzrtvizfxyvugyxgc.supabase.co','sb_publishable_UgeXbVXjHFvccavcMiinag_jYJX3Axu');</script>
 </head>
 <body>
 
@@ -1015,6 +1019,35 @@ footer{background:#E8E2D6;padding:80px 48px 40px;border-top:1px solid rgba(154,1
 @keyframes modalIn{from{opacity:0;transform:scale(.95);}to{opacity:1;transform:scale(1);}}
 #donation-modal.active{display:flex;}
 </style>
-
+<script>
+async function loadFromSupabase(){
+  try{
+    const {data:sd}=await _sb.from('schedule').select('*').order('id');
+    if(sd&&sd.length){state.schedule=sd;renderSchedule();}
+    const {data:yd}=await _sb.from('youtube').select('*').order('id');
+    if(yd&&yd.length){state.youtube=yd;renderYoutube();}
+    const {data:cd}=await _sb.from('church_info').select('*');
+    if(cd){
+      const info={};cd.forEach(r=>info[r.key]=r.value);
+      const pn=document.getElementById('pastor-name-display');
+      const pb=document.getElementById('pastor-bio-display');
+      if(pn&&info.pastor_name)pn.textContent=info.pastor_name;
+      if(pb&&info.pastor_bio)pb.textContent=info.pastor_bio;
+    }
+    const {data:pd}=await _sb.from('photos').select('*');
+    if(pd){pd.forEach(p=>{
+      try{
+        const urls=JSON.parse(p.urls||'[]');
+        if(p.type==='hero'&&urls.length){state.heroPhotos=urls;renderHeroCollage();}
+        if(p.type==='gallery'&&urls.length){state.galleryPhotos=urls;renderMainGallery();}
+        if(p.type==='pastor'&&urls[0]){state.pastor=urls[0];renderPastorImg();}
+        if(p.type==='strategy'&&urls[0]){state.strategy=urls[0];renderStrategyImg();}
+      }catch(err){}
+    });}
+  }catch(e){console.error('Supabase error:',e);}
+}
+loadFromSupabase();
+</script>
+</body>
 </body>
 </html>
