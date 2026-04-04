@@ -389,10 +389,17 @@ function addYt(){S.yt.push({url:'',title:''});renderYt();}
 function delYt(i){S.yt.splice(i,1);renderYt();}
 async function saveYt(){
   try{
-    await _sb.from('youtube').delete().neq('id',0);
+    // ✅ 모든 행 삭제 (gte 0 사용 - id는 항상 양수)
+    await _sb.from('youtube').delete().gte('id', 0);
+    
     for(const v of S.yt){
-      if(v.url) await _sb.from('youtube').insert({url:v.url,title:v.title||''});
+      if(v.url) await _sb.from('youtube').insert({url: v.url, title: v.title || ''});
     }
+    
+    // ✅ 저장 후 DB에서 다시 불러와서 화면 갱신
+    const {data: yd} = await _sb.from('youtube').select('*').order('id');
+    if(yd) { S.yt = yd; renderYt(); }
+    
     flash('yt-msg');
   }catch(e){alert('Save failed: '+e.message);}
 }
