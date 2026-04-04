@@ -213,7 +213,7 @@ html,body{
 .schedule-admin-list{display:flex;flex-direction:column;gap:8px;margin-bottom:20px;}
 .schedule-admin-item{
   background:var(--ivory2);padding:16px 20px;
-  display:grid;grid-template-columns:1fr 1fr 1fr 1fr auto;gap:12px;align-items:center;
+  display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr auto;gap:12px;align-items:center;
   border:1px solid var(--card-border);
 }
 .schedule-admin-item input{
@@ -548,13 +548,26 @@ function renderSchedAdmin(){
       <input type="text" placeholder="Event Title" value="${s.title}" onchange="state.schedule[${i}].title=this.value">
       <input type="text" placeholder="Speaker / Details" value="${s.speaker}" onchange="state.schedule[${i}].speaker=this.value">
       <input type="text" placeholder="Time (e.g. 11:00 AM)" value="${s.time}" onchange="state.schedule[${i}].time=this.value">
+      <input type="text" placeholder="Location" value="${s.location||''}" onchange="state.schedule[${i}].location=this.value">
       <button class="del-sched-btn" onclick="removeSchedItem(${i})">✕</button>
     </div>
   `).join('');
 }
 function addScheduleItem(){state.schedule.push({date:'',day:'Sunday',title:'',speaker:'',time:'11:00 AM',location:'Country Fellowship Church'});renderSchedAdmin();}
 function removeSchedItem(i){state.schedule.splice(i,1);renderSchedAdmin();}
-function saveSchedule(){flashMsg('sched-save-msg');}
+function async function saveSchedule(){
+  try{
+    await _sb.from('schedule').delete().neq('id',0);
+    for(const s of state.schedule){
+      await _sb.from('schedule').insert({
+        date:s.date, day:s.day||'Sunday', title:s.title,
+        speaker:s.speaker, time:s.time,
+        location:s.location||'Country Fellowship Church'
+      });
+    }
+    flashMsg('sched-save-msg');
+  }catch(e){alert('Save failed: '+e.message);}
+}
 
 function renderYtAdmin(){
   const list=document.getElementById('yt-admin-list');
