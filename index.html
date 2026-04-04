@@ -497,5 +497,144 @@ footer{background:#E8E2D6;padding:80px 48px 40px;border-top:1px solid rgba(154,1
 #donation-modal.active{display:flex;}
 </style>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const _sb=window.supabase.createClient('https://slwwzrtvizfxyvugyxgc.supabase.co','sb_publishable_UgeXbVXjHFvccavcMiinag_jYJX3Axu');
+
+const LOGO_SRC="data:image/webp;base64,UklGRqA5AABXRUJQVlA4IJQ5AADQpwCdASosASwB";
+
+const state={
+  heroPhotos:new Array(6).fill(null),
+  galleryPhotos:new Array(5).fill(null),
+  pastor:null,
+  strategy:null,
+  schedule:[
+    {date:'April 13',day:'Sunday',title:'Sunday Worship Service',speaker:'Pastor Moses Yu',time:'11:00 AM',location:'Country Fellowship Church'},
+    {date:'April 20',day:'Sunday',title:'Sunday Worship Service',speaker:'Pastor Moses Yu',time:'11:00 AM',location:'Country Fellowship Church'},
+    {date:'April 27',day:'Sunday',title:'DNA-12 Training Day',speaker:'Discipleship Team',time:'10:00 AM',location:'Country Fellowship Church'},
+  ],
+  youtube:[]
+};
+
+function renderSchedule(){
+  const list=document.getElementById('schedule-list-display');
+  if(!list)return;
+  if(!state.schedule.length){list.innerHTML='<div class="schedule-empty">No upcoming events scheduled.</div>';return;}
+  list.innerHTML=state.schedule.map(s=>`
+    <div class="schedule-item">
+      <div class="sched-date">${s.date}<span class="sched-day">${s.day||''}</span></div>
+      <div class="sched-info"><h4>${s.title}</h4><p>${s.speaker}</p></div>
+      <div class="sched-meta"><div class="sched-time">${s.time}</div><div class="sched-loc">${s.location}</div></div>
+    </div>
+  `).join('');
+}
+
+function getYtId(url){
+  if(!url)return null;url=url.trim();
+  const m=url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?.*v=|embed\/|shorts\/))([a-zA-Z0-9_-]{11})/);
+  if(m)return m[1];
+  if(/^[a-zA-Z0-9_-]{11}$/.test(url))return url;return null;
+}
+
+function renderYoutube(){
+  const g=document.getElementById('yt-grid');
+  if(!g)return;
+  const videos=state.youtube.filter(v=>v.url&&getYtId(v.url));
+  if(!videos.length){g.innerHTML=`<div class="yt-empty"><p>NO VIDEOS ADDED YET</p><p style="margin-top:8px;font-size:11px;opacity:.4;">Add YouTube videos via Admin panel</p></div>`;return;}
+  g.innerHTML=videos.map(v=>{
+    const id=getYtId(v.url);
+    const thumb=`https://img.youtube.com/vi/${id}/hqdefault.jpg`;
+    const ytUrl=`https://www.youtube.com/watch?v=${id}`;
+    return `<div class="yt-card"><a href="${ytUrl}" target="_blank" class="yt-thumb" style="display:block;position:relative;overflow:hidden;aspect-ratio:16/9;"><img class="yt-thumb-img" src="${thumb}" alt="${v.title||'Video'}" style="width:100%;height:100%;object-fit:cover;"><div class="yt-play-overlay"><div class="yt-play-btn"><svg width="18" height="18" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21" fill="#1E1811"/></svg></div></div></a><div class="yt-info"><h4>${v.title||'Untitled'}</h4><p>IM Friend Baptist Church</p></div></div>`;
+  }).join('');
+}
+
+function renderHeroCollage(){
+  const c=document.getElementById('hero-collage');
+  if(!c)return;
+  const photos=state.heroPhotos.filter(Boolean);
+  if(!photos.length){c.style.opacity=0;return;}
+  c.style.opacity=0.1;
+  c.innerHTML='';
+  for(let i=0;i<6;i++){
+    const s=document.createElement('div');s.className='hero-img-slot';
+    if(photos[i%photos.length]){const img=document.createElement('img');img.src=photos[i%photos.length];s.appendChild(img);c.appendChild(s);}
+  }
+}
+
+function renderMainGallery(){
+  const g=document.getElementById('main-gallery-grid');
+  if(!g)return;
+  g.innerHTML='';
+  for(let i=0;i<5;i++){
+    const item=document.createElement('div');item.className='gallery-item';
+    if(state.galleryPhotos[i]){const img=document.createElement('img');img.src=state.galleryPhotos[i];item.appendChild(img);}
+    else{item.innerHTML=`<div class="gallery-empty"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg><span>Gallery Photo</span></div>`;}
+    g.appendChild(item);
+  }
+}
+
+function renderPastorImg(){
+  const frame=document.getElementById('pastor-img-frame');
+  if(!frame)return;
+  let img=frame.querySelector('img');const ph=frame.querySelector('.img-placeholder');
+  if(state.pastor){if(!img){img=document.createElement('img');frame.appendChild(img);}img.src=state.pastor;if(ph)ph.style.display='none';}
+  else{if(img)img.remove();if(ph)ph.style.display='flex';}
+}
+
+function renderStrategyImg(){
+  const wrap=document.getElementById('strategy-img-wrap');
+  if(!wrap)return;
+  let img=wrap.querySelector('img');const ph=wrap.querySelector('.img-placeholder');
+  if(state.strategy){if(!img){img=document.createElement('img');img.style.cssText='width:100%;height:100%;object-fit:cover;';wrap.insertBefore(img,wrap.firstChild);}img.src=state.strategy;if(ph)ph.style.display='none';}
+  else{if(img)img.remove();if(ph)ph.style.display='flex';}
+}
+
+// Donation Modal
+function openDonation(){
+  document.getElementById('donation-modal').classList.add('active');
+  document.body.style.overflow='hidden';
+}
+function closeDonation(){
+  document.getElementById('donation-modal').classList.remove('active');
+  document.body.style.overflow='';
+}
+document.addEventListener('keydown',function(e){if(e.key==='Escape'){closeDonation();}});
+document.getElementById('donation-modal').addEventListener('click',function(e){if(e.target===this)closeDonation();});
+
+// Nav scroll
+window.addEventListener('scroll',()=>{document.getElementById('main-nav').classList.toggle('scrolled',window.scrollY>50);});
+
+// Supabase load
+async function loadFromSupabase(){
+  try{
+    const {data:sd}=await _sb.from('schedule').select('*').order('id');
+    if(sd&&sd.length){state.schedule=sd;renderSchedule();}
+    const {data:yd}=await _sb.from('youtube').select('*').order('id');
+    if(yd&&yd.length){state.youtube=yd;renderYoutube();}
+    const {data:cd}=await _sb.from('church_info').select('*');
+    if(cd){
+      const info={};cd.forEach(r=>info[r.key]=r.value);
+      const pn=document.getElementById('pastor-name-display');
+      const pb=document.getElementById('pastor-bio-display');
+      if(pn&&info.pastor_name)pn.textContent=info.pastor_name;
+      if(pb&&info.pastor_bio)pb.textContent=info.pastor_bio;
+    }
+    const {data:pd}=await _sb.from('photos').select('*');
+    if(pd){pd.forEach(p=>{
+      try{
+        const urls=JSON.parse(p.urls||'[]');
+        if(p.type==='hero'&&urls.length){state.heroPhotos=urls;renderHeroCollage();}
+        if(p.type==='gallery'&&urls.length){state.galleryPhotos=urls;renderMainGallery();}
+        if(p.type==='pastor'&&urls[0]){state.pastor=urls[0];renderPastorImg();}
+        if(p.type==='strategy'&&urls[0]){state.strategy=urls[0];renderStrategyImg();}
+      }catch(err){}
+    });}
+  }catch(e){console.error('Supabase error:',e);}
+}
+
+renderHeroCollage();renderMainGallery();renderSchedule();renderYoutube();
+loadFromSupabase();
+</script>
 </body>
 </html>
