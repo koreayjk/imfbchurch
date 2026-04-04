@@ -285,45 +285,6 @@ html,body{
 }
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-const _sb = window.supabase.createClient('https://slwwzrtvizfxyvugyxgc.supabase.co','sb_publishable_UgeXbVXjHFvccavcMiinag_jYJX3Axu');
-
-async function loadAllFromSupabase(){
-  try{
-    const {data:sd}=await _sb.from('schedule').select('*').order('id');
-    if(sd&&sd.length)state.schedule=sd;
-
-    const {data:yd}=await _sb.from('youtube').select('*').order('id');
-    if(yd&&yd.length)state.youtube=yd;
-
-    const {data:pd}=await _sb.from('photos').select('*');
-    if(pd){
-      pd.forEach(p=>{
-        try{
-          const urls=JSON.parse(p.urls||'[]');
-          if(p.type==='hero')state.heroPhotos=Object.assign(new Array(6).fill(null),urls.reduce((a,u,i)=>(a[i]=u,a),{}));
-          if(p.type==='gallery')state.galleryPhotos=Object.assign(new Array(5).fill(null),urls.reduce((a,u,i)=>(a[i]=u,a),{}));
-          if(p.type==='pastor')state.pastor=urls[0]||null;
-          if(p.type==='strategy')state.strategy=urls[0]||null;
-        }catch(err){}
-      });
-    }
-  }catch(e){console.error('Load error:',e);}
-}
-
-async function loadInfoFromSupabase(){
-  try{
-    const {data}=await _sb.from('church_info').select('*');
-    if(data){
-      const info={};data.forEach(r=>info[r.key]=r.value);
-      if(info.pastor_name)document.getElementById('edit-pastor-name').value=info.pastor_name;
-      if(info.pastor_bio)document.getElementById('edit-pastor-bio').value=info.pastor_bio;
-      if(info.service_time)document.getElementById('edit-service-time').value=info.service_time;
-      if(info.address)document.getElementById('edit-address').value=info.address;
-    }
-  }catch(e){console.error('Info load error:',e);}
-}
-</script>
 </head>
 <body>
 
@@ -451,11 +412,12 @@ const state = {
   youtube: []
 };
 
-function checkPw(){
+async function checkPw(){
   if(document.getElementById('admin-pw').value==='2414'){
     document.getElementById('admin-login').style.display='none';
     document.getElementById('admin-content').style.display='block';
-    initHeroGrid();initGalleryGrid();renderSchedAdmin();renderYtAdmin();
+    await loadAllFromSupabase();
+    initHeroGrid();initGalleryGrid();renderSchedAdmin();renderYtAdmin();loadInfoFromSupabase();
   }else{
     document.getElementById('pw-error').style.display='block';
     document.getElementById('admin-pw').value='';
@@ -586,6 +548,44 @@ function saveYoutube(){flashMsg('yt-save-msg');}
 
 function saveInfo(){flashMsg('save-msg');}
 function flashMsg(id){const m=document.getElementById(id);m.style.display='inline';setTimeout(()=>m.style.display='none',2500);}
+
+const _sb = window.supabase.createClient('https://slwwzrtvizfxyvugyxgc.supabase.co','sb_publishable_UgeXbVXjHFvccavcMiinag_jYJX3Axu');
+
+async function loadAllFromSupabase(){
+  try{
+    const {data:sd}=await _sb.from('schedule').select('*').order('id');
+    if(sd&&sd.length)state.schedule=sd;
+
+    const {data:yd}=await _sb.from('youtube').select('*').order('id');
+    if(yd&&yd.length)state.youtube=yd;
+
+    const {data:pd}=await _sb.from('photos').select('*');
+    if(pd){
+      pd.forEach(p=>{
+        try{
+          const urls=JSON.parse(p.urls||'[]');
+          if(p.type==='hero')state.heroPhotos=Object.assign(new Array(6).fill(null),urls.reduce((a,u,i)=>(a[i]=u,a),{}));
+          if(p.type==='gallery')state.galleryPhotos=Object.assign(new Array(5).fill(null),urls.reduce((a,u,i)=>(a[i]=u,a),{}));
+          if(p.type==='pastor')state.pastor=urls[0]||null;
+          if(p.type==='strategy')state.strategy=urls[0]||null;
+        }catch(err){}
+      });
+    }
+  }catch(e){console.error('Load error:',e);}
+}
+
+async function loadInfoFromSupabase(){
+  try{
+    const {data}=await _sb.from('church_info').select('*');
+    if(data){
+      const info={};data.forEach(r=>info[r.key]=r.value);
+      if(info.pastor_name)document.getElementById('edit-pastor-name').value=info.pastor_name;
+      if(info.pastor_bio)document.getElementById('edit-pastor-bio').value=info.pastor_bio;
+      if(info.service_time)document.getElementById('edit-service-time').value=info.service_time;
+      if(info.address)document.getElementById('edit-address').value=info.address;
+    }
+  }catch(e){console.error('Info load error:',e);}
+}
 </script>
 </body>
 </html>
