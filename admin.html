@@ -128,6 +128,7 @@ html,body{min-height:100vh;background:var(--ivory2);font-family:'Inter',sans-ser
     <button class="tab active" onclick="switchTab('photos',this)">📸 Photos</button>
     <button class="tab" onclick="switchTab('schedule',this)">📅 Schedule</button>
     <button class="tab" onclick="switchTab('youtube',this)">▶️ YouTube</button>
+    <button class="tab" onclick="switchTab('worship',this)">🔥 Worship</button>
     <button class="tab" onclick="switchTab('info',this)">✏️ Info</button>
   </div>
 
@@ -184,7 +185,16 @@ html,body{min-height:100vh;background:var(--ivory2);font-family:'Inter',sans-ser
       <span class="save-msg" id="yt-msg">✓ Saved!</span>
     </div>
   </div>
-
+<!-- WORSHIP -->
+<div id="tab-worship" class="tab-content">
+  <p class="hint">INTO Worship 유튜브 영상을 관리하세요. 영상 URL을 입력하면 into-the-world 페이지에 자동으로 표시됩니다.</p>
+  <div class="yt-list" id="worship-yt-list"></div>
+  <button class="add-btn" onclick="addWorshipYt()">+ Add Worship Video</button>
+  <div class="save-row">
+    <button class="save-btn" onclick="saveWorshipYt()">Save</button>
+    <span class="save-msg" id="worship-msg">✓ Saved!</span>
+  </div>
+</div>
   <!-- INFO -->
   <div id="tab-info" class="tab-content">
     <div class="info-form">
@@ -218,7 +228,8 @@ const S = {
     {date:'April 20',day:'Sunday',title:'Sunday Worship Service',speaker:'Pastor Moses Yu',time:'11:00 AM',location:'Country Fellowship Church'},
     {date:'April 27',day:'Sunday',title:'DNA-12 Training Day',speaker:'Discipleship Team',time:'10:00 AM',location:'Country Fellowship Church'},
   ],
-  yt: []
+  yt: [],
+worshipYt: []
 };
 
 // ── Login ──
@@ -387,6 +398,33 @@ function renderYt(){
 }
 function addYt(){S.yt.push({url:'',title:''});renderYt();}
 function delYt(i){S.yt.splice(i,1);renderYt();}
+  // ── INTO Worship YouTube ──
+function renderWorshipYt(){
+  const list = document.getElementById('worship-yt-list');
+  if(!list) return;
+  if(!S.worshipYt.length){
+    list.innerHTML='<p style="color:var(--text-sub);font-size:12px;text-align:center;padding:16px 0;opacity:.6;">No worship videos yet.</p>';
+    return;
+  }
+  list.innerHTML = S.worshipYt.map((v,i)=>`
+    <div class="yt-item">
+      <input type="text" placeholder="YouTube URL or ID" value="${v.url||''}" onchange="S.worshipYt[${i}].url=this.value">
+      <input type="text" placeholder="Title (e.g. INTO Worship Apr 11)" value="${v.title||''}" onchange="S.worshipYt[${i}].title=this.value">
+      <button class="del-btn" onclick="delWorshipYt(${i})">✕</button>
+    </div>
+  `).join('');
+}
+function addWorshipYt(){S.worshipYt.push({url:'',title:''});renderWorshipYt();}
+function delWorshipYt(i){S.worshipYt.splice(i,1);renderWorshipYt();}
+async function saveWorshipYt(){
+  try{
+    await _sb.from('worship_youtube').delete().neq('id',0);
+    for(const v of S.worshipYt){
+      if(v.url) await _sb.from('worship_youtube').insert({url:v.url,title:v.title||''});
+    }
+    flash('worship-msg');
+  }catch(e){alert('Save failed: '+e.message);}
+}
 async function saveYt(){
   try{
     // ✅ 모든 행 삭제 (gte 0 사용 - id는 항상 양수)
@@ -436,7 +474,10 @@ async function loadAll(){
     const {data:yd} = await _sb.from('youtube').select('*').order('id');
     if(yd&&yd.length) S.yt = yd;
     renderYt();
-
+// Worship YouTube
+const {data:wy} = await _sb.from('worship_youtube').select('*').order('id');
+if(wy&&wy.length) S.worshipYt = wy;
+renderWorshipYt();
     // Info
     const {data:id2} = await _sb.from('church_info').select('*');
     if(id2){
