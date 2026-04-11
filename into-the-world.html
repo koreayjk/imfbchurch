@@ -603,7 +603,7 @@ section{padding:100px 40px;}
       'https://slwwzrtvizfxyvugyxgc.supabase.co',
       'sb_publishable_UgeXbVXjHFvccavcMiinag_jYJX3Axu'
     );
-    const {data} = await _sb.from('worship_youtube').select('*').order('id');
+    const {data} = await _sb.from('worship_youtube').select('*').order('id', { ascending: false });
     const grid = document.getElementById('worship-yt-grid');
     if(!grid) return;
     function getYtId(url){
