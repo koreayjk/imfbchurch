@@ -473,6 +473,20 @@ section{padding:100px 40px;}
     </div>
   </div>
 </section>
+  <!-- INTO WORSHIP YOUTUBE -->
+<section style="background:#0E0A05;padding:80px 40px;">
+  <div style="max-width:900px;margin:0 auto;">
+    <div style="text-align:center;margin-bottom:44px;">
+      <p style="font-size:11px;letter-spacing:4px;color:#C9A84C;text-transform:uppercase;margin:0 0 12px;">Watch &amp; Replay</p>
+      <h3 style="font-family:'Playfair Display',serif;font-size:38px;font-weight:900;color:#FAF9F7;margin:0 0 16px;">INTO Worship<br><span style="color:#C9A84C;">on YouTube</span></h3>
+      <div style="width:48px;height:2px;background:#8B5E15;margin:0 auto;"></div>
+    </div>
+    <div id="worship-yt-grid">
+      <div style="text-align:center;padding:60px 0;color:#5A4A35;font-size:13px;letter-spacing:1px;">Loading videos...</div>
+    </div>
+    <p style="text-align:center;font-size:13px;color:#9A8A70;margin:32px 0 0;line-height:1.7;">Can't make it on Friday? Watch the full service on our YouTube channel.</p>
+  </div>
+</section>
 <!-- K-CLASS MINISTRY -->
 <section id="kclass" style="background:#FAF9F7;padding:100px 40px;border-top:3px solid rgba(139,94,21,0.1);">
   <div style="max-width:1100px;margin:0 auto;">
@@ -581,6 +595,62 @@ section{padding:100px 40px;}
 <div class="page-footer">
   <p>IM Friend Baptist Church · 408 E 24th St, Bryan, TX 77803 · <a href="index.html">Back to Home</a></p>
 </div>
-
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+(async function(){
+  try{
+    const _sb = window.supabase.createClient(
+      'https://slwwzrtvizfxyvugyxgc.supabase.co',
+      'sb_publishable_UgeXbVXjHFvccavcMiinag_jYJX3Axu'
+    );
+    const {data} = await _sb.from('worship_youtube').select('*').order('id');
+    const grid = document.getElementById('worship-yt-grid');
+    if(!grid) return;
+    function getYtId(url){
+      if(!url) return null;
+      url = url.trim();
+      const m = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?.*v=|embed\/|shorts\/))([a-zA-Z0-9_-]{11})/);
+      if(m) return m[1];
+      if(/^[a-zA-Z0-9_-]{11}$/.test(url)) return url;
+      return null;
+    }
+    if(!data||!data.length){
+      grid.innerHTML='<div style="text-align:center;padding:60px 0;color:#5A4A35;font-size:13px;">No worship videos yet. Add via Admin panel.</div>';
+      return;
+    }
+    const videos = data.filter(v=>getYtId(v.url));
+    const first = videos[0];
+    const rest = videos.slice(1);
+    let html = `<div style="margin-bottom:16px;">
+      <div style="position:relative;width:100%;padding-bottom:56.25%;overflow:hidden;border:1px solid rgba(201,168,76,0.2);">
+        <iframe src="https://www.youtube.com/embed/${getYtId(first.url)}"
+          style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;"
+          allowfullscreen loading="lazy"></iframe>
+      </div>
+      ${first.title?`<p style="font-size:14px;color:#C8B89A;margin:12px 0 0;font-weight:600;">${first.title}</p>`:''}
+    </div>`;
+    if(rest.length){
+      html += '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;">';
+      rest.forEach(v=>{
+        const id=getYtId(v.url);
+        if(!id) return;
+        html += `<div>
+          <div style="position:relative;width:100%;padding-bottom:56.25%;overflow:hidden;border:1px solid rgba(201,168,76,0.15);">
+            <iframe src="https://www.youtube.com/embed/${id}"
+              style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;"
+              allowfullscreen loading="lazy"></iframe>
+          </div>
+          ${v.title?`<p style="font-size:12px;color:#9A8A70;margin:8px 0 0;">${v.title}</p>`:''}
+        </div>`;
+      });
+      html += '</div>';
+    }
+    grid.innerHTML = html;
+  }catch(e){
+    const grid = document.getElementById('worship-yt-grid');
+    if(grid) grid.innerHTML='<div style="text-align:center;padding:40px 0;color:#5A4A35;font-size:12px;">Unable to load videos.</div>';
+  }
+})();
+</script>
 </body>
 </html>
