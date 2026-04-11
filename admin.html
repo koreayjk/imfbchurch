@@ -475,7 +475,7 @@ async function loadAll(){
     if(yd&&yd.length) S.yt = yd;
     renderYt();
 // Worship YouTube
-const {data:wy} = await _sb.from('worship_youtube').select('*').order('id');
+const {data:wy} = await _sb.from('worship_youtube').select('*').order('id', { ascending: false });
 if(wy&&wy.length) S.worshipYt = wy;
 renderWorshipYt();
     // Info
