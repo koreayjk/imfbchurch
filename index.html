@@ -506,7 +506,9 @@ footer{background:#E8E2D6;padding:80px 48px 40px;border-top:1px solid rgba(154,1
   <div style="position:absolute;inset:0;background-image:radial-gradient(circle at 20% 60%,rgba(139,94,21,0.08) 0%,transparent 50%),radial-gradient(circle at 80% 30%,rgba(139,94,21,0.05) 0%,transparent 45%);"></div>
   <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,#8B5E15,#B8892A,#8B5E15,transparent);"></div>
   <div style="max-width:1000px;margin:0 auto;position:relative;z-index:1;">
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center;">
+
+    <!-- 상단: 텍스트 + 이벤트 카드 -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center;margin-bottom:48px;">
       <div>
         <p style="font-size:11px;letter-spacing:4px;color:#8B5E15;text-transform:uppercase;margin:0 0 16px;">Monthly Cultural Event</p>
         <h2 style="font-family:'Playfair Display',serif;font-size:clamp(36px,5vw,56px);font-weight:900;color:#1E1811;margin:0 0 8px;line-height:1.0;">Korea<br>Food Day</h2>
@@ -536,6 +538,43 @@ footer{background:#E8E2D6;padding:80px 48px 40px;border-top:1px solid rgba(154,1
         </div>
       </div>
     </div>
+
+    <!-- 하단: 사진 4장 -->
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;">
+      <div style="position:relative;overflow:hidden;height:220px;">
+        <img src="https://images.unsplash.com/photo-1590301157890-4810ed352733?w=400&q=80" alt="Korean food" style="width:100%;height:100%;object-fit:cover;transition:transform .4s;" onmouseover="this.style.transform='scale(1.06)'" onmouseout="this.style.transform='scale(1)'">
+        <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(30,24,17,0.65) 0%,transparent 55%);"></div>
+        <div style="position:absolute;bottom:14px;left:14px;">
+          <p style="font-size:10px;letter-spacing:1px;color:#C9A84C;text-transform:uppercase;margin:0 0 2px;">🍜</p>
+          <p style="font-size:13px;color:#FAF9F7;font-weight:600;margin:0;">Korean Food</p>
+        </div>
+      </div>
+      <div style="position:relative;overflow:hidden;height:220px;">
+        <img src="https://images.unsplash.com/photo-1559939886-052b24cce2a0?w=400&q=80" alt="Korean tteokbokki" style="width:100%;height:100%;object-fit:cover;transition:transform .4s;" onmouseover="this.style.transform='scale(1.06)'" onmouseout="this.style.transform='scale(1)'">
+        <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(30,24,17,0.65) 0%,transparent 55%);"></div>
+        <div style="position:absolute;bottom:14px;left:14px;">
+          <p style="font-size:10px;letter-spacing:1px;color:#C9A84C;text-transform:uppercase;margin:0 0 2px;">🍱</p>
+          <p style="font-size:13px;color:#FAF9F7;font-weight:600;margin:0;">K-Cuisine</p>
+        </div>
+      </div>
+      <div style="position:relative;overflow:hidden;height:220px;">
+        <img src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=400&q=80" alt="Korean games community" style="width:100%;height:100%;object-fit:cover;transition:transform .4s;" onmouseover="this.style.transform='scale(1.06)'" onmouseout="this.style.transform='scale(1)'">
+        <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(30,24,17,0.65) 0%,transparent 55%);"></div>
+        <div style="position:absolute;bottom:14px;left:14px;">
+          <p style="font-size:10px;letter-spacing:1px;color:#C9A84C;text-transform:uppercase;margin:0 0 2px;">🎮</p>
+          <p style="font-size:13px;color:#FAF9F7;font-weight:600;margin:0;">K-Games</p>
+        </div>
+      </div>
+      <div style="position:relative;overflow:hidden;height:220px;">
+        <img src="https://images.unsplash.com/photo-1517154421773-0529f29ea451?w=400&q=80" alt="Korean culture" style="width:100%;height:100%;object-fit:cover;transition:transform .4s;" onmouseover="this.style.transform='scale(1.06)'" onmouseout="this.style.transform='scale(1)'">
+        <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(30,24,17,0.65) 0%,transparent 55%);"></div>
+        <div style="position:absolute;bottom:14px;left:14px;">
+          <p style="font-size:10px;letter-spacing:1px;color:#C9A84C;text-transform:uppercase;margin:0 0 2px;">🇰🇷</p>
+          <p style="font-size:13px;color:#FAF9F7;font-weight:600;margin:0;">K-Culture</p>
+        </div>
+      </div>
+    </div>
+
   </div>
 </section>
   
