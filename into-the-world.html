@@ -659,6 +659,58 @@ section{padding:100px 40px;}
     </div>
   </div>
 </section>
+  <!-- KFD SLIDESHOW -->
+<section style="background:#0A0A0A;padding:0;">
+  <div style="position:relative;width:100%;overflow:hidden;background:#0A0A0A;" id="kfd-slideshow-wrap">
+    <div id="kfd-slides" style="display:flex;transition:transform 0.6s ease;width:100%;">
+      <div style="min-width:100%;height:500px;display:flex;align-items:center;justify-content:center;background:#1A1308;">
+        <p style="color:#9A8A70;font-size:13px;letter-spacing:2px;">Loading photos...</p>
+      </div>
+    </div>
+    <button onclick="kfdPrev()" style="position:absolute;left:20px;top:50%;transform:translateY(-50%);background:rgba(0,0,0,0.5);border:1px solid rgba(255,255,255,0.2);color:#FAF9F7;width:44px;height:44px;cursor:pointer;font-size:18px;z-index:10;">&#8249;</button>
+    <button onclick="kfdNext()" style="position:absolute;right:20px;top:50%;transform:translateY(-50%);background:rgba(0,0,0,0.5);border:1px solid rgba(255,255,255,0.2);color:#FAF9F7;width:44px;height:44px;cursor:pointer;font-size:18px;z-index:10;">&#8250;</button>
+    <div id="kfd-dots" style="position:absolute;bottom:16px;left:50%;transform:translateX(-50%);display:flex;gap:8px;z-index:10;"></div>
+  </div>
+</section>
+
+<script>
+(async function(){
+  try{
+    const _sbKfd = window.supabase
+      ? window.supabase.createClient('https://slwwzrtvizfxyvugyxgc.supabase.co','sb_publishable_UgeXbVXjHFvccavcMiinag_jYJX3Axu')
+      : null;
+    if(!_sbKfd) return;
+    const {data} = await _sbKfd.from('kfd_photos').select('*').eq('id',1);
+    if(!data||!data.length) return;
+    const urls = JSON.parse(data[0].urls||'[]').filter(Boolean);
+    if(!urls.length) return;
+    const slidesEl = document.getElementById('kfd-slides');
+    const dotsEl = document.getElementById('kfd-dots');
+    if(!slidesEl||!dotsEl) return;
+    slidesEl.innerHTML = urls.map(url => `
+      <div style="min-width:100%;height:500px;overflow:hidden;flex-shrink:0;">
+        <img src="${url}" style="width:100%;height:100%;object-fit:cover;display:block;">
+      </div>
+    `).join('');
+    dotsEl.innerHTML = urls.map((_,i) => `
+      <div onclick="kfdGoTo(${i})" style="width:8px;height:8px;border-radius:50%;background:${i===0?'#C9A84C':'rgba(255,255,255,0.4)'};cursor:pointer;transition:background .3s;"></div>
+    `).join('');
+    let current = 0;
+    let timer = setInterval(kfdAutoNext, 3000);
+    function goTo(n){
+      current = (n + urls.length) % urls.length;
+      slidesEl.style.transform = `translateX(-${current * 100}%)`;
+      dotsEl.querySelectorAll('div').forEach((d,i) => {
+        d.style.background = i===current ? '#C9A84C' : 'rgba(255,255,255,0.4)';
+      });
+    }
+    function kfdAutoNext(){ goTo(current+1); }
+    window.kfdNext = function(){ clearInterval(timer); goTo(current+1); timer=setInterval(kfdAutoNext,3000); };
+    window.kfdPrev = function(){ clearInterval(timer); goTo(current-1); timer=setInterval(kfdAutoNext,3000); };
+    window.kfdGoTo = function(n){ clearInterval(timer); goTo(n); timer=setInterval(kfdAutoNext,3000); };
+  }catch(e){ console.error('KFD slideshow error:',e); }
+})();
+</script>
 <!-- APPLY -->
 <section class="apply-section" id="apply">
   <div class="container">
