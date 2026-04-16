@@ -129,6 +129,7 @@ html,body{min-height:100vh;background:var(--ivory2);font-family:'Inter',sans-ser
     <button class="tab" onclick="switchTab('schedule',this)">📅 Schedule</button>
     <button class="tab" onclick="switchTab('youtube',this)">▶️ YouTube</button>
     <button class="tab" onclick="switchTab('worship',this)">🔥 Worship</button>
+    <button class="tab" onclick="switchTab('kfd',this)">🍜 KFD</button>
     <button class="tab" onclick="switchTab('info',this)">✏️ Info</button>
   </div>
 
@@ -195,6 +196,16 @@ html,body{min-height:100vh;background:var(--ivory2);font-family:'Inter',sans-ser
     <span class="save-msg" id="worship-msg">✓ Saved!</span>
   </div>
 </div>
+  <!-- KFD PHOTOS -->
+<div id="tab-kfd" class="tab-content">
+  <p class="hint">KFD 슬라이드쇼 사진을 업로드하세요. into-the-world 페이지에 3초마다 자동으로 넘겨지는 슬라이드쇼로 표시됩니다.</p>
+  <div class="photo-grid" id="kfd-photo-grid" style="grid-template-columns:repeat(3,1fr);"></div>
+  <button class="add-btn" style="margin-top:16px;" onclick="addKfdSlot()">+ Add Photo Slot</button>
+  <div class="save-row" style="margin-top:16px;">
+    <span style="font-size:11px;color:var(--text-sub);opacity:.6;">사진을 클릭하면 업로드됩니다. 순서대로 슬라이드쇼에 표시됩니다.</span>
+  </div>
+</div>
+  
   <!-- INFO -->
   <div id="tab-info" class="tab-content">
     <div class="info-form">
@@ -229,7 +240,8 @@ const S = {
     {date:'April 27',day:'Sunday',title:'DNA-12 Training Day',speaker:'Discipleship Team',time:'10:00 AM',location:'Country Fellowship Church'},
   ],
   yt: [],
-worshipYt: []
+worshipYt: [],
+kfdPhotos: []
 };
 
 // ── Login ──
@@ -441,7 +453,43 @@ async function saveYt(){
     flash('yt-msg');
   }catch(e){alert('Save failed: '+e.message);}
 }
-
+// ── KFD Photos ──
+function initKfdGrid(){
+  const g = document.getElementById('kfd-photo-grid');
+  if(!g) return;
+  g.innerHTML = '';
+  if(!S.kfdPhotos.length){
+    g.innerHTML = '<p style="color:var(--text-sub);font-size:12px;grid-column:1/-1;text-align:center;padding:20px 0;opacity:.6;">No photos yet. Click "+ Add Photo Slot" to start.</p>';
+    return;
+  }
+  S.kfdPhotos.forEach((url, i) => {
+    const s = document.createElement('div');
+    s.className = 'photo-slot' + (url ? ' has-img' : '');
+    s.id = 'kfd-slot-'+i;
+    s.innerHTML = `<div class="slot-label"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg><span>KFD ${i+1}</span></div><button class="del-photo-btn" onclick="delKfdPhoto(${i},event)">✕</button><input type="file" accept="image/*" onchange="uploadKfdPhoto(this,${i})">`;
+    if(url){const img=document.createElement('img');img.src=url;s.insertBefore(img,s.firstChild);}
+    g.appendChild(s);
+  });
+}
+function addKfdSlot(){
+  S.kfdPhotos.push(null);
+  initKfdGrid();
+}
+async function uploadKfdPhoto(input, i){
+  if(!input.files[0]) return;
+  try{
+    const url = await uploadStorage(input.files[0], `kfd/kfd_${i}_${Date.now()}`);
+    S.kfdPhotos[i] = url;
+    await _sb.from('kfd_photos').upsert({id:1, urls:JSON.stringify(S.kfdPhotos.filter(Boolean))});
+    initKfdGrid();
+  }catch(e){alert('Upload failed: '+e.message);}
+}
+async function delKfdPhoto(i, e){
+  e&&e.stopPropagation();
+  S.kfdPhotos.splice(i, 1);
+  initKfdGrid();
+  try{await _sb.from('kfd_photos').upsert({id:1, urls:JSON.stringify(S.kfdPhotos.filter(Boolean))});}catch(err){}
+}
 // ── Info ──
 async function saveInfo(){
   try{
@@ -460,8 +508,15 @@ async function saveInfo(){
 
 // ── Load all from Supabase ──
 async function loadAll(){
+// KFD Photos
+    const {data:kd} = await _sb.from('kfd_photos').select('*').eq('id',1);
+    if(kd&&kd.length){
+      try{ S.kfdPhotos = JSON.parse(kd[0].urls||'[]'); }catch(err){}
+    }
+    
   initHeroGrid();
   initGalleryGrid();
+  initKfdGrid();
   renderSched();
   renderYt();
   try{
