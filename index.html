@@ -265,6 +265,11 @@ footer{background:#E8E2D6;padding:80px 48px 40px;border-top:1px solid rgba(154,1
   .yt-admin-item{grid-template-columns:1fr;}
 }
 </style>
+  @media(max-width:600px){
+  .kfd-main-grid{grid-template-columns:1fr !important;gap:32px !important;}
+  .kfd-main-grid > div:last-child{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+}
+
 </head>
 <body>
 
@@ -508,7 +513,7 @@ footer{background:#E8E2D6;padding:80px 48px 40px;border-top:1px solid rgba(154,1
   <div style="max-width:1000px;margin:0 auto;position:relative;z-index:1;">
 
     <!-- 상단: 텍스트 + 이벤트 카드 -->
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center;margin-bottom:48px;">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center;margin-bottom:48px;" class="kfd-main-grid">
       <div>
         <p style="font-size:11px;letter-spacing:4px;color:#8B5E15;text-transform:uppercase;margin:0 0 16px;">Monthly Cultural Event</p>
         <h2 style="font-family:'Playfair Display',serif;font-size:clamp(36px,5vw,56px);font-weight:900;color:#1E1811;margin:0 0 8px;line-height:1.0;">Korea<br>Food Day</h2>
