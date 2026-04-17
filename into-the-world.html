@@ -673,44 +673,6 @@ section{padding:100px 40px;}
   </div>
 </section>
 
-<script>
-(async function(){
-  try{
-    const _sbKfd = window.supabase
-      ? window.supabase.createClient('https://slwwzrtvizfxyvugyxgc.supabase.co','sb_publishable_UgeXbVXjHFvccavcMiinag_jYJX3Axu')
-      : null;
-    if(!_sbKfd) return;
-    const {data} = await _sbKfd.from('kfd_photos').select('*').eq('id',1);
-    if(!data||!data.length) return;
-    const urls = JSON.parse(data[0].urls||'[]').filter(Boolean);
-    if(!urls.length) return;
-    const slidesEl = document.getElementById('kfd-slides');
-    const dotsEl = document.getElementById('kfd-dots');
-    if(!slidesEl||!dotsEl) return;
-    slidesEl.innerHTML = urls.map(url => `
-      <div style="min-width:100%;height:500px;overflow:hidden;flex-shrink:0;">
-        <img src="${url}" style="width:100%;height:100%;object-fit:cover;display:block;">
-      </div>
-    `).join('');
-    dotsEl.innerHTML = urls.map((_,i) => `
-      <div onclick="kfdGoTo(${i})" style="width:8px;height:8px;border-radius:50%;background:${i===0?'#C9A84C':'rgba(255,255,255,0.4)'};cursor:pointer;transition:background .3s;"></div>
-    `).join('');
-    let current = 0;
-    let timer = setInterval(kfdAutoNext, 3000);
-    function goTo(n){
-      current = (n + urls.length) % urls.length;
-      slidesEl.style.transform = `translateX(-${current * 100}%)`;
-      dotsEl.querySelectorAll('div').forEach((d,i) => {
-        d.style.background = i===current ? '#C9A84C' : 'rgba(255,255,255,0.4)';
-      });
-    }
-    function kfdAutoNext(){ goTo(current+1); }
-    window.kfdNext = function(){ clearInterval(timer); goTo(current+1); timer=setInterval(kfdAutoNext,3000); };
-    window.kfdPrev = function(){ clearInterval(timer); goTo(current-1); timer=setInterval(kfdAutoNext,3000); };
-    window.kfdGoTo = function(n){ clearInterval(timer); goTo(n); timer=setInterval(kfdAutoNext,3000); };
-  }catch(e){ console.error('KFD slideshow error:',e); }
-})();
-</script>
 <!-- APPLY -->
 <section class="apply-section" id="apply">
   <div class="container">
@@ -750,7 +712,17 @@ section{padding:100px 40px;}
   <p>IM Friend Baptist Church · 408 E 24th St, Bryan, TX 77803 · <a href="index.html">Back to Home</a></p>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+(async function(){
+  try{
+    const _sbKfd = window.supabase
+      ? window.supabase.createClient(...)
+    ...
+  }
+})();
+</script>
 <script>
+  
 (async function(){
   try{
     const _sb = window.supabase.createClient(
