@@ -287,7 +287,8 @@ footer{background:#E8E2D6;padding:80px 48px 40px;border-top:1px solid rgba(154,1
   [style*="padding:80px 40px"]{padding:48px 16px !important;}
   [style*="gap:64px"]{gap:28px !important;}
 }
-
+.sermon-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
+@media(max-width:900px){.sermon-grid{grid-template-columns:1fr;}}
 </style>
 </head>
 <body>
@@ -304,6 +305,7 @@ footer{background:#E8E2D6;padding:80px 48px 40px;border-top:1px solid rgba(154,1
     <li><a href="#schedule-section">Schedule</a></li>
     <li><a href="tripleschool.html">Triple School</a></li>
     <li><a href="#media-section">Media</a></li>
+    <li><a href="#sermon-section">Sermon</a></li>
     <li><a href="#gallery-section">Gallery</a></li>
     <li><a href="#join-section">Join Us</a></li>
     
@@ -456,7 +458,22 @@ footer{background:#E8E2D6;padding:80px 48px 40px;border-top:1px solid rgba(154,1
     <div class="media-grid" id="yt-grid"></div>
   </div>
 </div>
-
+<!-- SERMON -->
+<div id="sermon-section" style="background:#120E08;padding:100px 48px;position:relative;overflow:hidden;">
+  <div style="position:absolute;inset:0;background-image:radial-gradient(circle at 30% 50%,rgba(139,94,21,0.15) 0%,transparent 50%),radial-gradient(circle at 70% 30%,rgba(201,168,76,0.08) 0%,transparent 40%);"></div>
+  <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,#8B5E15,#C9A84C,#8B5E15,transparent);"></div>
+  <div style="max-width:1100px;margin:0 auto;position:relative;z-index:1;">
+    <div style="text-align:center;margin-bottom:56px;">
+      <span style="font-size:11px;letter-spacing:4px;color:#C9A84C;text-transform:uppercase;display:block;margin-bottom:14px;">IM Friend Baptist Church</span>
+      <h2 style="font-family:'Playfair Display',serif;font-size:clamp(36px,5vw,56px);font-weight:900;color:#FAF9F7;margin:0 0 8px;line-height:1.0;">Sunday<br><span style="color:#C9A84C;">Sermon</span></h2>
+      <div style="width:48px;height:2px;background:linear-gradient(90deg,#8B5E15,#C9A84C);margin:20px auto;"></div>
+      <p style="font-size:15px;color:#C8B89A;max-width:500px;margin:0 auto;line-height:1.8;">Weekly messages from the Word of God, delivered every Sunday.</p>
+    </div>
+    <div class="sermon-grid" id="sermon-grid">
+      <div style="text-align:center;padding:60px 0;color:#5A4A35;font-size:13px;letter-spacing:1px;grid-column:1/-1;">Loading sermons...</div>
+    </div>
+  </div>
+</div>
 <!-- GALLERY -->
 <div style="background:var(--ivory2);max-width:100%;"><div class="section-wrap" id="gallery-section">
   <span class="section-label">Community</span>
@@ -845,7 +862,32 @@ function getYtId(url){
   if(m)return m[1];
   if(/^[a-zA-Z0-9_-]{11}$/.test(url))return url;return null;
 }
-
+function renderSermon(videos){
+  const grid = document.getElementById('sermon-grid');
+  if(!grid) return;
+  if(!videos||!videos.length){
+    grid.innerHTML='<div style="text-align:center;padding:40px 0;color:#5A4A35;font-size:13px;grid-column:1/-1;">No sermons yet.</div>';
+    return;
+  }
+  function getYtId(url){
+    if(!url) return null;
+    url=url.trim();
+    const m=url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?.*v=|embed\/|shorts\/|live\/))([a-zA-Z0-9_-]{11})/);
+    if(m) return m[1];
+    if(/^[a-zA-Z0-9_-]{11}$/.test(url)) return url;
+    return null;
+  }
+  grid.innerHTML=videos.map(v=>{
+    const id=getYtId(v.url);
+    if(!id) return '';
+    return `<div style="background:rgba(255,255,255,0.04);border:1px solid rgba(201,168,76,0.15);overflow:hidden;">
+      <div style="position:relative;width:100%;padding-bottom:56.25%;">
+        <iframe src="https://www.youtube.com/embed/${id}" style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;" allowfullscreen loading="lazy"></iframe>
+      </div>
+      ${v.title?`<div style="padding:14px 16px;"><p style="font-size:13px;color:#C8B89A;font-weight:600;margin:0;">${v.title}</p></div>`:''}
+    </div>`;
+  }).join('');
+}
 function renderYoutube(){
   const g=document.getElementById('yt-grid');
   if(!g)return;
@@ -922,6 +964,8 @@ async function loadFromSupabase(){
     if(sd&&sd.length){state.schedule=sd;renderSchedule();}
     const {data:yd}=await _sb.from('youtube').select('*').order('id');
     if(yd&&yd.length){state.youtube=yd;renderYoutube();}
+    const {data:serd}=await _sb.from('sermon_youtube').select('*').order('id',{ascending:false});
+    if(serd&&serd.length){renderSermon(serd);}
     const {data:cd}=await _sb.from('church_info').select('*');
     if(cd){
       const info={};cd.forEach(r=>info[r.key]=r.value);
