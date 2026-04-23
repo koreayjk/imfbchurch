@@ -287,7 +287,7 @@ footer{background:#E8E2D6;padding:80px 48px 40px;border-top:1px solid rgba(154,1
   [style*="padding:80px 40px"]{padding:48px 16px !important;}
   [style*="gap:64px"]{gap:28px !important;}
 }
-.sermon-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
+.sermon-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
 @media(max-width:900px){.sermon-grid{grid-template-columns:1fr;}}
 </style>
 </head>
@@ -877,16 +877,42 @@ function renderSermon(videos){
     if(/^[a-zA-Z0-9_-]{11}$/.test(url)) return url;
     return null;
   }
-  grid.innerHTML=videos.map(v=>{
-    const id=getYtId(v.url);
-    if(!id) return '';
-    return `<div style="background:rgba(255,255,255,0.04);border:1px solid rgba(201,168,76,0.15);overflow:hidden;">
+
+  // 최대 7개만
+  const list = videos.slice(0, 7);
+  const first = list[0];
+  const rest = list.slice(1);
+  const firstId = getYtId(first.url);
+
+  let html = '';
+
+  // 첫 번째 영상 크게
+  if(firstId){
+    html += `<div style="grid-column:1/-1;background:rgba(255,255,255,0.04);border:1px solid rgba(201,168,76,0.2);overflow:hidden;">
       <div style="position:relative;width:100%;padding-bottom:56.25%;">
-        <iframe src="https://www.youtube.com/embed/${id}" style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;" allowfullscreen loading="lazy"></iframe>
+        <iframe src="https://www.youtube.com/embed/${firstId}"
+          style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;"
+          allowfullscreen loading="lazy"></iframe>
       </div>
-      ${v.title?`<div style="padding:14px 16px;"><p style="font-size:13px;color:#C8B89A;font-weight:600;margin:0;">${v.title}</p></div>`:''}
+      ${first.title?`<div style="padding:16px 20px;"><p style="font-size:15px;color:#FAF9F7;font-weight:600;margin:0;">${first.title}</p></div>`:''}
     </div>`;
-  }).join('');
+  }
+
+  // 나머지 6개 작게
+  rest.forEach(v => {
+    const id = getYtId(v.url);
+    if(!id) return;
+    html += `<div style="background:rgba(255,255,255,0.04);border:1px solid rgba(201,168,76,0.15);overflow:hidden;">
+      <div style="position:relative;width:100%;padding-bottom:56.25%;">
+        <iframe src="https://www.youtube.com/embed/${id}"
+          style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;"
+          allowfullscreen loading="lazy"></iframe>
+      </div>
+      ${v.title?`<div style="padding:12px 14px;"><p style="font-size:12px;color:#C8B89A;font-weight:600;margin:0;">${v.title}</p></div>`:''}
+    </div>`;
+  });
+
+  grid.innerHTML = html;
 }
 function renderYoutube(){
   const g=document.getElementById('yt-grid');
