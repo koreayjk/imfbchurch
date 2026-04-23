@@ -287,8 +287,9 @@ footer{background:#E8E2D6;padding:80px 48px 40px;border-top:1px solid rgba(154,1
   [style*="padding:80px 40px"]{padding:48px 16px !important;}
   [style*="gap:64px"]{gap:28px !important;}
 }
-.sermon-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+.sermon-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
 @media(max-width:900px){.sermon-grid{grid-template-columns:1fr;}}
+@media(max-width:600px){.sermon-grid > div:not(:first-child){display:none !important;}}
 </style>
 </head>
 <body>
