@@ -130,6 +130,7 @@ html,body{min-height:100vh;background:var(--ivory2);font-family:'Inter',sans-ser
     <button class="tab" onclick="switchTab('youtube',this)">▶️ YouTube</button>
     <button class="tab" onclick="switchTab('worship',this)">🔥 Worship</button>
     <button class="tab" onclick="switchTab('kfd',this)">🍜 KFD</button>
+    <button class="tab" onclick="switchTab('sermon',this)">📺 Sermon</button>
     <button class="tab" onclick="switchTab('info',this)">✏️ Info</button>
   </div>
 
@@ -205,7 +206,16 @@ html,body{min-height:100vh;background:var(--ivory2);font-family:'Inter',sans-ser
     <span style="font-size:11px;color:var(--text-sub);opacity:.6;">사진을 클릭하면 업로드됩니다. 순서대로 슬라이드쇼에 표시됩니다.</span>
   </div>
 </div>
-  
+ <!-- SERMON -->
+<div id="tab-sermon" class="tab-content">
+  <p class="hint">주일 설교 유튜브 영상을 관리하세요. 최신순으로 표시됩니다.</p>
+  <div class="yt-list" id="sermon-yt-list"></div>
+  <button class="add-btn" onclick="addSermonYt()">+ Add Sermon Video</button>
+  <div class="save-row">
+    <button class="save-btn" onclick="saveSermonYt()">Save</button>
+    <span class="save-msg" id="sermon-msg">✓ Saved!</span>
+  </div>
+</div> 
   <!-- INFO -->
   <div id="tab-info" class="tab-content">
     <div class="info-form">
@@ -241,7 +251,8 @@ const S = {
   ],
   yt: [],
 worshipYt: [],
-kfdPhotos: []
+kfdPhotos: [],
+sermonYt: []
 };
 
 // ── Login ──
@@ -490,6 +501,34 @@ async function delKfdPhoto(i, e){
   initKfdGrid();
   try{await _sb.from('kfd_photos').upsert({id:1, urls:JSON.stringify(S.kfdPhotos.filter(Boolean))});}catch(err){}
 }
+  // ── Sermon YouTube ──
+function renderSermonYt(){
+  const list = document.getElementById('sermon-yt-list');
+  if(!list) return;
+  if(!S.sermonYt.length){
+    list.innerHTML='<p style="color:var(--text-sub);font-size:12px;text-align:center;padding:16px 0;opacity:.6;">No sermon videos yet.</p>';
+    return;
+  }
+  list.innerHTML = S.sermonYt.map((v,i)=>`
+    <div class="yt-item">
+      <input type="text" placeholder="YouTube URL or ID" value="${v.url||''}" onchange="S.sermonYt[${i}].url=this.value">
+      <input type="text" placeholder="Title (e.g. John 3:16 - The Love of God)" value="${v.title||''}" onchange="S.sermonYt[${i}].title=this.value">
+      <button class="del-btn" onclick="delSermonYt(${i})">✕</button>
+    </div>
+  `).join('');
+}
+function addSermonYt(){S.sermonYt.push({url:'',title:''});renderSermonYt();}
+function delSermonYt(i){S.sermonYt.splice(i,1);renderSermonYt();}
+async function saveSermonYt(){
+  try{
+    await _sb.from('sermon_youtube').delete().neq('id',0);
+    for(const v of S.sermonYt){
+      if(v.url) await _sb.from('sermon_youtube').insert({url:v.url,title:v.title||''});
+    }
+    flash('sermon-msg');
+  }catch(e){alert('Save failed: '+e.message);}
+}
+  
 // ── Info ──
 async function saveInfo(){
   try{
@@ -508,7 +547,13 @@ async function saveInfo(){
 
 // ── Load all from Supabase ──
 async function loadAll(){
-// KFD Photos
+// Sermon YouTube
+    const {data:syd} = await _sb.from('sermon_youtube').select('*').order('id',{ascending:false});
+    if(syd&&syd.length) S.sermonYt = syd;
+    renderSermonYt();
+
+  
+  // KFD Photos
     const {data:kd} = await _sb.from('kfd_photos').select('*').eq('id',1);
     if(kd&&kd.length){
       try{ S.kfdPhotos = JSON.parse(kd[0].urls||'[]'); }catch(err){}
