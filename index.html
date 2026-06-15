@@ -888,10 +888,10 @@ function renderSermon(videos){
     return null;
   }
 
-  // 최대 7개만
-  const list = videos.slice(0, 7);
+  // 최신 1개 크게 + 나머지 3개만
+  const list = videos.slice(0, 4);
   const first = list[0];
-  const rest = list.slice(1);
+  const rest = list.slice(1, 4);
   const firstId = getYtId(first.url);
 
   let html = '';
@@ -908,7 +908,7 @@ function renderSermon(videos){
     </div>`;
   }
 
-  // 나머지 6개 작게
+  // 나머지 3개 작게
   rest.forEach(v => {
     const id = getYtId(v.url);
     if(!id) return;
