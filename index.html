@@ -836,7 +836,7 @@ footer{background:#E8E2D6;padding:80px 48px 40px;border-top:1px solid rgba(154,1
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-const _sb=window.supabase.createClient('https://slwwzrtvizfxyvugyxgc.supabase.co','sb_publishable_UgeXbVXjHFvccavcMiinag_jYJX3Axu');
+const _sb=window.supabase.createClient('https://illbgsjvhsciougzjgwn.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlsbGJnc2p2aHNjaW91Z3pqZ3duIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUwNzM4NDUsImV4cCI6MjA5MDY0OTg0NX0.TrBlbpyXoMlwwBZUjbeC-Li6XcDAMeGgfNWGRmSyOR4');
 
 const LOGO_SRC="data:image/webp;base64,UklGRqA5AABXRUJQVlA4IJQ5AADQpwCdASosASwB";
 
@@ -996,13 +996,13 @@ window.addEventListener('scroll',()=>{document.getElementById('main-nav').classL
 // Supabase load
 async function loadFromSupabase(){
   try{
-    const {data:sd}=await _sb.from('schedule').select('*').order('id');
+    const {data:sd}=await _sb.from('imfb_schedule').select('*').order('id');
     if(sd&&sd.length){state.schedule=sd;renderSchedule();}
-    const {data:yd}=await _sb.from('youtube').select('*').order('id');
+    const {data:yd}=await _sb.from('imfb_youtube').select('*').order('id');
     if(yd&&yd.length){state.youtube=yd;renderYoutube();}
-    const {data:serd}=await _sb.from('sermon_youtube').select('*').order('id',{ascending:false});
+    const {data:serd}=await _sb.from('imfb_sermon_youtube').select('*').order('id',{ascending:false});
     if(serd&&serd.length){renderSermon(serd);}
-    const {data:cd}=await _sb.from('church_info').select('*');
+    const {data:cd}=await _sb.from('imfb_church_info').select('*');
     if(cd){
       const info={};cd.forEach(r=>info[r.key]=r.value);
       const pn=document.getElementById('pastor-name-display');
@@ -1010,7 +1010,7 @@ async function loadFromSupabase(){
       if(pn&&info.pastor_name)pn.textContent=info.pastor_name;
       if(pb&&info.pastor_bio)pb.textContent=info.pastor_bio;
     }
-    const {data:pd}=await _sb.from('photos').select('*');
+    const {data:pd}=await _sb.from('imfb_photos').select('*');
     if(pd){pd.forEach(p=>{
       try{
         const urls=JSON.parse(p.urls||'[]');
