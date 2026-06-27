@@ -67,6 +67,10 @@ html,body{min-height:100vh;background:var(--ivory2);font-family:'Inter',sans-ser
 .add-btn:hover{background:rgba(139,94,21,.08);}
 .del-btn{background:rgba(180,40,40,.12);border:1px solid rgba(180,40,40,.2);color:#c0392b;padding:8px 10px;cursor:pointer;font-size:12px;white-space:nowrap;transition:all .2s;}
 .del-btn:hover{background:rgba(180,40,40,.85);color:#fff;}
+.move-btn{background:rgba(139,94,21,.1);border:1px solid rgba(139,94,21,.2);color:#8b5e15;padding:8px 9px;cursor:pointer;font-size:12px;line-height:1;transition:all .2s;}
+.move-btn:hover{background:var(--gold);color:#fff;}
+.move-btn:disabled{opacity:.3;cursor:not-allowed;}
+.row-actions{display:flex;gap:6px;align-items:center;}
 .save-btn{background:var(--gold);color:#FAF9F7;border:none;padding:11px 24px;font-size:11px;letter-spacing:2px;text-transform:uppercase;font-weight:600;cursor:pointer;transition:background .2s;font-family:'Inter',sans-serif;}
 .save-btn:hover{background:var(--gold-light);}
 .save-msg{font-size:11px;color:#2ecc71;letter-spacing:1px;margin-left:12px;display:none;}
@@ -296,6 +300,12 @@ function flash(id){
   setTimeout(()=>el.style.display='none', 2500);
 }
 
+// ── List reorder helpers (▲▼) ──
+function moveItem(arr,i,dir){const j=i+dir;if(j<0||j>=arr.length)return;const t=arr[i];arr[i]=arr[j];arr[j]=t;}
+function moveYt(i,dir){moveItem(S.yt,i,dir);renderYt();}
+function moveWorshipYt(i,dir){moveItem(S.worshipYt,i,dir);renderWorshipYt();}
+function moveSermonYt(i,dir){moveItem(S.sermonYt,i,dir);renderSermonYt();}
+
 // ── File helpers ──
 function readFile(f, cb){
   const r = new FileReader();
@@ -419,7 +429,11 @@ function renderYt(){
     <div class="yt-item">
       <input type="text" placeholder="YouTube URL or ID" value="${v.url||''}" onchange="S.yt[${i}].url=this.value">
       <input type="text" placeholder="Title (optional)" value="${v.title||''}" onchange="S.yt[${i}].title=this.value">
-      <button class="del-btn" onclick="delYt(${i})">✕</button>
+      <div class="row-actions">
+        <button class="move-btn" onclick="moveYt(${i},-1)" ${i===0?'disabled':''} title="위로">▲</button>
+        <button class="move-btn" onclick="moveYt(${i},1)" ${i===S.yt.length-1?'disabled':''} title="아래로">▼</button>
+        <button class="del-btn" onclick="delYt(${i})">✕</button>
+      </div>
     </div>
   `).join('');
 }
@@ -447,16 +461,22 @@ function renderWorshipYt(){
     <div class="yt-item">
       <input type="text" placeholder="YouTube URL or ID" value="${v.url||''}" onchange="S.worshipYt[${i}].url=this.value">
       <input type="text" placeholder="Title (e.g. INTO Worship Apr 11)" value="${v.title||''}" onchange="S.worshipYt[${i}].title=this.value">
-      <button class="del-btn" onclick="delWorshipYt(${i})">✕</button>
+      <div class="row-actions">
+        <button class="move-btn" onclick="moveWorshipYt(${i},-1)" ${i===0?'disabled':''} title="위로">▲</button>
+        <button class="move-btn" onclick="moveWorshipYt(${i},1)" ${i===S.worshipYt.length-1?'disabled':''} title="아래로">▼</button>
+        <button class="del-btn" onclick="delWorshipYt(${i})">✕</button>
+      </div>
     </div>
   `).join('');
 }
-function addWorshipYt(){S.worshipYt.push({url:'',title:''});renderWorshipYt();}
+function addWorshipYt(){S.worshipYt.unshift({url:'',title:''});renderWorshipYt();}
 function delWorshipYt(i){S.worshipYt.splice(i,1);renderWorshipYt();}
 async function saveWorshipYt(){
   try{
     await _sb.from('imfb_worship_youtube').delete().neq('id',0);
-    for(const v of S.worshipYt){
+    // 사이트는 id 내림차순(최신 먼저)으로 보여주므로, 어드민 맨 위가 사이트 맨 앞이 되도록 역순 저장
+    for(let k=S.worshipYt.length-1;k>=0;k--){
+      const v=S.worshipYt[k];
       if(v.url) await _sb.from('imfb_worship_youtube').insert({url:v.url,title:v.title||''});
     }
     flash('worship-msg');
@@ -513,16 +533,22 @@ function renderSermonYt(){
     <div class="yt-item">
       <input type="text" placeholder="YouTube URL or ID" value="${v.url||''}" onchange="S.sermonYt[${i}].url=this.value">
       <input type="text" placeholder="Title (e.g. John 3:16 - The Love of God)" value="${v.title||''}" onchange="S.sermonYt[${i}].title=this.value">
-      <button class="del-btn" onclick="delSermonYt(${i})">✕</button>
+      <div class="row-actions">
+        <button class="move-btn" onclick="moveSermonYt(${i},-1)" ${i===0?'disabled':''} title="위로">▲</button>
+        <button class="move-btn" onclick="moveSermonYt(${i},1)" ${i===S.sermonYt.length-1?'disabled':''} title="아래로">▼</button>
+        <button class="del-btn" onclick="delSermonYt(${i})">✕</button>
+      </div>
     </div>
   `).join('');
 }
-function addSermonYt(){S.sermonYt.push({url:'',title:''});renderSermonYt();}
+function addSermonYt(){S.sermonYt.unshift({url:'',title:''});renderSermonYt();}
 function delSermonYt(i){S.sermonYt.splice(i,1);renderSermonYt();}
 async function saveSermonYt(){
   try{
     await _sb.from('imfb_sermon_youtube').delete().neq('id',0);
-    for(const v of S.sermonYt){
+    // 사이트는 id 내림차순(최신 먼저)으로 보여주므로, 어드민 맨 위가 사이트 맨 앞이 되도록 역순 저장
+    for(let k=S.sermonYt.length-1;k>=0;k--){
+      const v=S.sermonYt[k];
       if(v.url) await _sb.from('imfb_sermon_youtube').insert({url:v.url,title:v.title||''});
     }
     flash('sermon-msg');
@@ -565,8 +591,8 @@ async function loadAll(){
     if(yd&&yd.length) S.yt = yd;
     renderYt();
 
-    // Worship YouTube
-    const {data:wy} = await _sb.from('imfb_worship_youtube').select('*').order('id');
+    // Worship YouTube (사이트와 동일하게 최신순으로 표시 → 맨 위 = 사이트 맨 앞)
+    const {data:wy} = await _sb.from('imfb_worship_youtube').select('*').order('id',{ascending:false});
     if(wy&&wy.length) S.worshipYt = wy;
     renderWorshipYt();
 
