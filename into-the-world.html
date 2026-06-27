@@ -718,10 +718,10 @@ section{padding:100px 40px;}
 (async function(){
   try{
     const _sb = window.supabase.createClient(
-      'https://slwwzrtvizfxyvugyxgc.supabase.co',
-      'sb_publishable_UgeXbVXjHFvccavcMiinag_jYJX3Axu'
+      'https://illbgsjvhsciougzjgwn.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlsbGJnc2p2aHNjaW91Z3pqZ3duIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUwNzM4NDUsImV4cCI6MjA5MDY0OTg0NX0.TrBlbpyXoMlwwBZUjbeC-Li6XcDAMeGgfNWGRmSyOR4'
     );
-    const {data} = await _sb.from('worship_youtube').select('*').order('id', { ascending: false });
+    const {data} = await _sb.from('imfb_worship_youtube').select('*').order('id', { ascending: false });
     const grid = document.getElementById('worship-yt-grid');
     if(!grid) return;
     function getYtId(url){

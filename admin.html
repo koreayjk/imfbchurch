@@ -240,7 +240,7 @@ html,body{min-height:100vh;background:var(--ivory2);font-family:'Inter',sans-ser
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 // ── Supabase ──
-const _sb = window.supabase.createClient('https://slwwzrtvizfxyvugyxgc.supabase.co','sb_publishable_UgeXbVXjHFvccavcMiinag_jYJX3Axu');
+const _sb = window.supabase.createClient('https://illbgsjvhsciougzjgwn.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlsbGJnc2p2aHNjaW91Z3pqZ3duIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUwNzM4NDUsImV4cCI6MjA5MDY0OTg0NX0.TrBlbpyXoMlwwBZUjbeC-Li6XcDAMeGgfNWGRmSyOR4');
 
 // ── State ──
 const S = {
@@ -303,13 +303,13 @@ function readFile(f, cb){
   r.readAsDataURL(f);
 }
 async function uploadStorage(file, path){
-  const {data, error} = await _sb.storage.from('church-images').upload(path, file, {upsert:true});
+  const {data, error} = await _sb.storage.from('imfb-church-images').upload(path, file, {upsert:true});
   if(error) throw error;
-  const {data:pub} = _sb.storage.from('church-images').getPublicUrl(path);
+  const {data:pub} = _sb.storage.from('imfb-church-images').getPublicUrl(path);
   return pub.publicUrl;
 }
 async function savePhotoDB(type, urls){
-  await _sb.from('photos').upsert({type, urls:JSON.stringify(urls)}, {onConflict:'type'});
+  await _sb.from('imfb_photos').upsert({type, urls:JSON.stringify(urls)}, {onConflict:'type'});
 }
 
 // ── Hero grid ──
@@ -403,9 +403,9 @@ function addSched(){S.schedule.push({date:'',day:'Sunday',title:'',speaker:'',ti
 function delSched(i){S.schedule.splice(i,1);renderSched();}
 async function saveSched(){
   try{
-    await _sb.from('schedule').delete().neq('id',0);
+    await _sb.from('imfb_schedule').delete().neq('id',0);
     for(const s of S.schedule){
-      await _sb.from('schedule').insert({date:s.date,day:s.day||'Sunday',title:s.title,speaker:s.speaker,time:s.time,location:s.location||''});
+      await _sb.from('imfb_schedule').insert({date:s.date,day:s.day||'Sunday',title:s.title,speaker:s.speaker,time:s.time,location:s.location||''});
     }
     flash('sched-msg');
   }catch(e){alert('Save failed: '+e.message);}
@@ -427,9 +427,9 @@ function addYt(){S.yt.push({url:'',title:''});renderYt();}
 function delYt(i){S.yt.splice(i,1);renderYt();}
 async function saveYt(){
   try{
-    await _sb.from('youtube').delete().neq('id',0);
+    await _sb.from('imfb_youtube').delete().neq('id',0);
     for(const v of S.yt){
-      if(v.url) await _sb.from('youtube').insert({url:v.url,title:v.title||''});
+      if(v.url) await _sb.from('imfb_youtube').insert({url:v.url,title:v.title||''});
     }
     flash('yt-msg');
   }catch(e){alert('Save failed: '+e.message);}
@@ -455,9 +455,9 @@ function addWorshipYt(){S.worshipYt.push({url:'',title:''});renderWorshipYt();}
 function delWorshipYt(i){S.worshipYt.splice(i,1);renderWorshipYt();}
 async function saveWorshipYt(){
   try{
-    await _sb.from('worship_youtube').delete().neq('id',0);
+    await _sb.from('imfb_worship_youtube').delete().neq('id',0);
     for(const v of S.worshipYt){
-      if(v.url) await _sb.from('worship_youtube').insert({url:v.url,title:v.title||''});
+      if(v.url) await _sb.from('imfb_worship_youtube').insert({url:v.url,title:v.title||''});
     }
     flash('worship-msg');
   }catch(e){alert('Save failed: '+e.message);}
@@ -490,7 +490,7 @@ async function uploadKfdPhoto(input, i){
   try{
     const url = await uploadStorage(input.files[0], `kfd/kfd_${i}_${Date.now()}`);
     S.kfdPhotos[i] = url;
-    await _sb.from('kfd_photos').upsert({id:1, urls:JSON.stringify(S.kfdPhotos.filter(Boolean))});
+    await _sb.from('imfb_kfd_photos').upsert({id:1, urls:JSON.stringify(S.kfdPhotos.filter(Boolean))});
     initKfdGrid();
   }catch(e){alert('Upload failed: '+e.message);}
 }
@@ -498,7 +498,7 @@ async function delKfdPhoto(i, e){
   e&&e.stopPropagation();
   S.kfdPhotos.splice(i, 1);
   initKfdGrid();
-  try{await _sb.from('kfd_photos').upsert({id:1, urls:JSON.stringify(S.kfdPhotos.filter(Boolean))});}catch(err){}
+  try{await _sb.from('imfb_kfd_photos').upsert({id:1, urls:JSON.stringify(S.kfdPhotos.filter(Boolean))});}catch(err){}
 }
 
 // ── Sermon YouTube ──
@@ -521,9 +521,9 @@ function addSermonYt(){S.sermonYt.push({url:'',title:''});renderSermonYt();}
 function delSermonYt(i){S.sermonYt.splice(i,1);renderSermonYt();}
 async function saveSermonYt(){
   try{
-    await _sb.from('sermon_youtube').delete().neq('id',0);
+    await _sb.from('imfb_sermon_youtube').delete().neq('id',0);
     for(const v of S.sermonYt){
-      if(v.url) await _sb.from('sermon_youtube').insert({url:v.url,title:v.title||''});
+      if(v.url) await _sb.from('imfb_sermon_youtube').insert({url:v.url,title:v.title||''});
     }
     flash('sermon-msg');
   }catch(e){alert('Save failed: '+e.message);}
@@ -539,7 +539,7 @@ async function saveInfo(){
       address: document.getElementById('address').value
     };
     for(const [k,v] of Object.entries(fields)){
-      await _sb.from('church_info').upsert({key:k,value:v},{onConflict:'key'});
+      await _sb.from('imfb_church_info').upsert({key:k,value:v},{onConflict:'key'});
     }
     flash('info-msg');
   }catch(e){alert('Save failed: '+e.message);}
@@ -556,22 +556,22 @@ async function loadAll(){
   renderWorshipYt();
   try{
     // Schedule
-    const {data:sd} = await _sb.from('schedule').select('*').order('id');
+    const {data:sd} = await _sb.from('imfb_schedule').select('*').order('id');
     if(sd&&sd.length) S.schedule = sd;
     renderSched();
 
     // YouTube
-    const {data:yd} = await _sb.from('youtube').select('*').order('id');
+    const {data:yd} = await _sb.from('imfb_youtube').select('*').order('id');
     if(yd&&yd.length) S.yt = yd;
     renderYt();
 
     // Worship YouTube
-    const {data:wy} = await _sb.from('worship_youtube').select('*').order('id');
+    const {data:wy} = await _sb.from('imfb_worship_youtube').select('*').order('id');
     if(wy&&wy.length) S.worshipYt = wy;
     renderWorshipYt();
 
     // Info
-    const {data:id2} = await _sb.from('church_info').select('*');
+    const {data:id2} = await _sb.from('imfb_church_info').select('*');
     if(id2){
       const info={};id2.forEach(r=>info[r.key]=r.value);
       if(info.pastor_name) document.getElementById('pastor-name').value=info.pastor_name;
@@ -581,7 +581,7 @@ async function loadAll(){
     }
 
     // Photos
-    const {data:pd} = await _sb.from('photos').select('*');
+    const {data:pd} = await _sb.from('imfb_photos').select('*');
     if(pd){
       pd.forEach(p=>{
         try{
@@ -595,12 +595,12 @@ async function loadAll(){
     }
 
     // Sermon YouTube
-    const {data:syd} = await _sb.from('sermon_youtube').select('*').order('id',{ascending:false});
+    const {data:syd} = await _sb.from('imfb_sermon_youtube').select('*').order('id',{ascending:false});
     if(syd&&syd.length) S.sermonYt = syd;
     renderSermonYt();
 
     // KFD Photos
-    const {data:kd} = await _sb.from('kfd_photos').select('*').eq('id',1);
+    const {data:kd} = await _sb.from('imfb_kfd_photos').select('*').eq('id',1);
     if(kd&&kd.length){
       try{ S.kfdPhotos = JSON.parse(kd[0].urls||'[]'); }catch(err){}
     }
