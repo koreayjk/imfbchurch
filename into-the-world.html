@@ -738,7 +738,7 @@ section{padding:100px 40px;}
     }
     const videos = data.filter(v=>getYtId(v.url));
     const first = videos[0];
-    const rest = videos.slice(1);
+    const rest = videos.slice(1, 4); // 지난 영상은 최신 3개만 (최신 1개 크게 + 3개 = 총 4개)
     let html = `<div style="margin-bottom:16px;">
       <div style="position:relative;width:100%;padding-bottom:56.25%;overflow:hidden;border:1px solid rgba(201,168,76,0.2);">
         <iframe src="https://www.youtube.com/embed/${getYtId(first.url)}"
