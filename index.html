@@ -24,7 +24,8 @@
   --card-bg:#FFFFFF;--card-border:rgba(139,94,21,0.12);
   --text-main:#1E1811;--text-sub:#5A4A35;
 }
-html{scroll-behavior:smooth;}
+html{scroll-behavior:smooth;scroll-padding-top:92px;}
+#schedule-section,#pastor-section,#bfm-section,#vision-section,#tripleschool-section,#media-section,#sermon-section,#gallery-section,#kclass-section,#join-section{scroll-margin-top:92px;}
 body{background:var(--ivory);color:var(--text-main);font-family:'Inter',sans-serif;overflow-x:hidden;}
 
 /* NAV */
@@ -34,9 +35,21 @@ nav.scrolled{background:rgba(250,249,247,0.97);border-bottom:1px solid rgba(154,
 .nav-logo-img{width:44px;height:44px;border-radius:50%;object-fit:cover;border:1px solid rgba(201,168,76,0.4);}
 .nav-logo-text{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:3px;color:var(--gold);cursor:pointer;line-height:1.1;}
 .nav-logo-text span{color:var(--white);display:block;font-size:10px;letter-spacing:4px;opacity:.7;}
-.nav-links{display:flex;gap:32px;list-style:none;}
-.nav-links a{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#4A3F2F;text-decoration:none;font-weight:400;transition:color .2s;}
-.nav-links a:hover{color:var(--gold);}
+.nav-links{display:flex;gap:26px;list-style:none;align-items:center;}
+.nav-links>li{position:relative;padding:10px 0;}
+.nav-links a,.nav-trigger{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#4A3F2F;text-decoration:none;font-weight:400;transition:color .2s;font-family:inherit;background:none;border:0;cursor:pointer;display:inline-flex;align-items:center;gap:5px;}
+.nav-links a:hover,.nav-trigger:hover,.has-dropdown:hover .nav-trigger{color:var(--gold);}
+.nav-trigger::after{content:"▾";font-size:9px;opacity:.55;}
+.nav-dropdown{position:absolute;top:100%;left:50%;transform:translateX(-50%) translateY(6px);min-width:220px;background:#FAF9F7;border:1px solid rgba(139,94,21,.15);box-shadow:0 16px 44px rgba(60,45,20,.16);padding:8px;display:flex;flex-direction:column;opacity:0;visibility:hidden;transition:opacity .18s,transform .18s;z-index:1200;}
+.has-dropdown:hover .nav-dropdown,.has-dropdown:focus-within .nav-dropdown{opacity:1;visibility:visible;transform:translateX(-50%) translateY(0);}
+.nav-dropdown a{display:block;padding:11px 14px;font-size:11px;letter-spacing:1.5px;white-space:nowrap;border-radius:2px;transition:background .15s,color .15s;}
+.nav-dropdown a:hover{background:var(--ivory3);color:var(--gold);}
+.nav-toggle{display:none;flex-direction:column;gap:5px;background:none;border:0;cursor:pointer;padding:8px;z-index:1300;}
+.nav-toggle span{display:block;width:24px;height:2px;background:#2A2015;transition:transform .3s,opacity .3s;}
+#main-nav.open .nav-toggle span:nth-child(1){transform:translateY(7px) rotate(45deg);}
+#main-nav.open .nav-toggle span:nth-child(2){opacity:0;}
+#main-nav.open .nav-toggle span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
+.nav-overlay{display:none;}
 .nav-cta{background:var(--gold);color:#FAF9F7;padding:10px 22px;font-size:11px;letter-spacing:2px;text-transform:uppercase;font-weight:600;border:none;cursor:pointer;transition:background .2s;}
 .nav-cta:hover{background:var(--gold-light);}
 
@@ -258,7 +271,17 @@ footer{background:#E8E2D6;padding:80px 48px 40px;border-top:1px solid rgba(154,1
 .col-grid{display:grid;grid-template-columns:1fr 1fr;gap:28px;margin-bottom:28px;}
 
 @media(max-width:900px){
-  nav{padding:16px 20px;}.nav-links{display:none;}
+  nav{padding:14px 20px;}
+  .nav-toggle{display:flex;}
+  .nav-links{position:fixed;top:0;right:0;height:100vh;width:min(330px,82vw);background:#FAF9F7;flex-direction:column;align-items:stretch;gap:0;padding:92px 22px 28px;transform:translateX(105%);transition:transform .32s ease;box-shadow:-12px 0 44px rgba(0,0,0,.14);overflow-y:auto;z-index:1150;}
+  #main-nav.open .nav-links{transform:translateX(0);}
+  .nav-links>li{position:static;padding:0;border-bottom:1px solid rgba(139,94,21,.1);}
+  .nav-links a,.nav-trigger{display:flex;width:100%;padding:15px 4px;font-size:13px;}
+  .nav-trigger{justify-content:space-between;}
+  .nav-dropdown{position:static;transform:none;opacity:1;visibility:visible;box-shadow:none;border:0;background:transparent;padding:0 0 12px 12px;min-width:0;}
+  .nav-dropdown a{padding:10px 4px;font-size:12px;color:#5A4A35;}
+  .nav-overlay{display:block;position:fixed;inset:0;background:rgba(20,15,8,.42);opacity:0;visibility:hidden;transition:opacity .3s;z-index:1140;}
+  #main-nav.open ~ .nav-overlay{opacity:1;visibility:visible;}
   .section-wrap{padding:80px 20px;}
   #schedule-section,#vision-section,#media-section,#movement,.join-section-bg,.join-cards-wrap{padding-left:20px;padding-right:20px;}
   .pastor-grid{grid-template-columns:1fr;}
@@ -311,19 +334,43 @@ footer{background:#E8E2D6;padding:80px 48px 40px;border-top:1px solid rgba(154,1
     <div class="nav-logo-text">IM FRIEND <span>BAPTIST CHURCH</span></div>
   </div>
   <ul class="nav-links">
-    <li><a href="#pastor-section">About</a></li>
-    <li><a href="#vision-section">Vision</a></li>
+    <li class="has-dropdown">
+      <button class="nav-trigger" type="button">About</button>
+      <div class="nav-dropdown">
+        <a href="#pastor-section">Our Pastor</a>
+        <a href="#bfm-section">Statement of Faith</a>
+        <a href="#vision-section">Vision · DNA-12</a>
+      </div>
+    </li>
+    <li><a href="into-the-world.html">INTO THE WORLD</a></li>
+    <li class="has-dropdown">
+      <button class="nav-trigger" type="button">Programs</button>
+      <div class="nav-dropdown">
+        <a href="tripleschool.html">Triple School</a>
+        <a href="#kclass-section">K-Class</a>
+        <a href="into-the-world.html#kfd">Korean Food Day</a>
+      </div>
+    </li>
+    <li class="has-dropdown">
+      <button class="nav-trigger" type="button">Media</button>
+      <div class="nav-dropdown">
+        <a href="#media-section">Videos</a>
+        <a href="#sermon-section">Sermons</a>
+        <a href="#gallery-section">Gallery</a>
+      </div>
+    </li>
     <li><a href="#schedule-section">Schedule</a></li>
-    <li><a href="tripleschool.html">Triple School</a></li>
-    <li><a href="#media-section">Media</a></li>
-    <li><a href="#sermon-section">Sermon</a></li>
-    <li><a href="#kclass-section">K-Class</a></li>
-    <li><a href="#gallery-section">Gallery</a></li>
-    <li><a href="#join-section">Join Us</a></li>
-    
   </ul>
   <button class="nav-cta" onclick="document.getElementById('join-section').scrollIntoView({behavior:'smooth'})">Visit Us</button>
+  <button class="nav-toggle" type="button" aria-label="Toggle menu" onclick="document.getElementById('main-nav').classList.toggle('open')"><span></span><span></span><span></span></button>
 </nav>
+<div class="nav-overlay" onclick="document.getElementById('main-nav').classList.remove('open')"></div>
+<script>
+// Close the mobile menu after choosing a destination
+document.querySelectorAll('#main-nav .nav-links a').forEach(function(a){
+  a.addEventListener('click',function(){document.getElementById('main-nav').classList.remove('open');});
+});
+</script>
 
 <!-- HERO -->
 <div id="hero">
