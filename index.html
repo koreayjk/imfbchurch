@@ -88,7 +88,8 @@ nav.scrolled{background:rgba(250,249,247,0.97);border-bottom:1px solid rgba(154,
 .movement-text{flex-shrink:0;}
 .movement-text h2{font-family:'Playfair Display',serif;font-size:clamp(24px,3vw,40px);font-weight:900;margin-bottom:10px;color:var(--text-main);line-height:1.05;}
 .movement-text p{font-family:'Cormorant Garamond',serif;font-size:17px;font-style:italic;color:var(--gold);letter-spacing:2px;}
-.movement-numbers{display:flex;gap:56px;flex-wrap:wrap;align-items:flex-end;}
+.movement-numbers{display:flex;gap:56px;flex-wrap:wrap;align-items:flex-end;flex:1;justify-content:space-evenly;text-align:center;}
+.m-num{text-align:center;}
 .m-num-val{font-family:'Bebas Neue',sans-serif;font-size:72px;color:var(--gold);line-height:1;}
 .m-num-label{font-size:10px;letter-spacing:3px;color:var(--text-sub);text-transform:uppercase;margin-top:6px;opacity:.8;}
 
@@ -564,24 +565,6 @@ document.querySelectorAll('#main-nav .nav-links a').forEach(function(a){
   <div class="section-divider"></div>
   <div class="gallery-grid" id="main-gallery-grid"></div>
 </div>
-</div>
-<!-- ROADMAP -->
-<div style="background:#FFFFFF;max-width:100%;padding:120px 48px;border-top:1px solid var(--card-border);">
-  <div style="max-width:1400px;margin:0 auto;">
-    <div class="strategy-grid">
-      <div class="strategy-steps">
-        <span class="section-label">3-Year Roadmap</span>
-        <h2 class="section-title">Strategic<br>Roadmap</h2>
-        <div class="section-divider"></div>
-        <div class="step-item"><div class="step-num">01</div><div class="step-content"><h3>Solidifying — Year 1</h3><p>Strengthen HQ leadership and the DNA-12 core team. Scale high-quality media content to reach TAMU's 80,000+ students.</p></div></div>
-        <div class="step-item"><div class="step-num">02</div><div class="step-content"><h3>Launching — Year 2</h3><p>Commission and send the first wave of graduating Champions to plant Eco Churches in strategic cities across America.</p></div></div>
-        <div class="step-item"><div class="step-num">03</div><div class="step-content"><h3>Multiplying — Year 3</h3><p>Lay the groundwork for 50 Network Churches. Host the first 'Eco United' Conference, gathering all 500 potential Eco Churches.</p></div></div>
-      </div>
-      <div class="strategy-img" id="strategy-img-wrap">
-        <div class="img-placeholder"><svg style="width:36px;height:36px;stroke:var(--gold);fill:none;" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg><span style="font-size:10px;letter-spacing:2px;color:var(--gold);text-transform:uppercase;">Strategy Photo</span></div>
-      </div>
-    </div>
-  </div>
 </div>
   <!-- INTO THE WORLD MISSION -->
 <section style="background:#1E1811;padding:90px 20px;position:relative;overflow:hidden;">
