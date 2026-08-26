@@ -312,17 +312,25 @@ footer{background:#E8E2D6;padding:80px 48px 40px;border-top:1px solid rgba(154,1
 
 }
   @media(max-width:600px){
-  /* K-CLASS */
+  /* K-CLASS + big two-column layouts → stack on mobile */
+  [style*="grid-template-columns:1fr 1fr"][style*="gap:80px"]{grid-template-columns:1fr !important;gap:32px !important;}
+  [style*="grid-template-columns:1fr 1fr"][style*="gap:64px"]{grid-template-columns:1fr !important;gap:32px !important;}
   [style*="grid-template-columns:1fr 1fr"][style*="gap:48px"]{grid-template-columns:1fr !important;gap:28px !important;}
   [style*="grid-template-columns:1fr 1fr"][style*="gap:56px"]{grid-template-columns:1fr !important;gap:28px !important;}
 
   /* 공통 패딩 */
+  [style*="padding:120px 48px"]{padding:56px 20px !important;}
   [style*="padding:100px 40px"]{padding:56px 16px !important;}
   [style*="padding:80px 40px"]{padding:48px 16px !important;}
-  [style*="gap:64px"]{gap:28px !important;}
 }
 .sermon-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
 @media(max-width:900px){.sermon-grid{grid-template-columns:1fr;}}
+/* Mobile: stack the big two-column sections that use inline grids */
+@media(max-width:768px){
+  #tripleschool-section{padding:64px 20px !important;}
+  #tripleschool-section > div{grid-template-columns:1fr !important;gap:36px !important;}
+  #kclass-section > div > div:first-child{grid-template-columns:1fr !important;gap:32px !important;}
+}
 @media(max-width:600px){.sermon-grid > div:not(:first-child){display:none !important;}}
 </style>
 </head>
