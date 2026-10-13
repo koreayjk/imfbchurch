@@ -25,7 +25,7 @@
   --text-main:#1E1811;--text-sub:#5A4A35;
 }
 html{scroll-behavior:smooth;scroll-padding-top:92px;}
-#schedule-section,#pastor-section,#bfm-section,#vision-section,#tripleschool-section,#media-section,#sermon-section,#gallery-section,#kclass-section,#join-section{scroll-margin-top:92px;}
+#schedule-section,#pastor-section,#bfm-section,#what-we-believe,#vision-section,#tripleschool-section,#media-section,#sermon-section,#gallery-section,#kclass-section,#join-section{scroll-margin-top:92px;}
 body{background:var(--ivory);color:var(--text-main);font-family:'Inter',sans-serif;overflow-x:hidden;}
 
 /* NAV */
@@ -348,6 +348,7 @@ footer{background:#E8E2D6;padding:80px 48px 40px;border-top:1px solid rgba(154,1
       <div class="nav-dropdown">
         <a href="#pastor-section">Our Pastor</a>
         <a href="#bfm-section">Statement of Faith</a>
+        <a href="#what-we-believe">What We Believe</a>
         <a href="#vision-section">Vision · DNA-12</a>
       </div>
     </li>
@@ -498,7 +499,7 @@ document.querySelectorAll('#main-nav .nav-links a').forEach(function(a){
   </div>
 
   <!-- Core Beliefs summary -->
-  <div style="max-width:900px;margin:44px auto 0;">
+  <div id="what-we-believe" style="max-width:900px;margin:44px auto 0;">
     <div style="font-family:'Bebas Neue',sans-serif;font-size:11px;letter-spacing:4px;color:var(--gold);text-align:center;margin-bottom:22px;">What We Believe · Core Convictions</div>
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;">
       <div style="background:var(--ivory2);border:1px solid var(--card-border);border-top:2px solid var(--gold);padding:20px 22px;">
