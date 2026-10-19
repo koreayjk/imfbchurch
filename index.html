@@ -128,6 +128,10 @@ nav.scrolled{background:rgba(250,249,247,0.97);border-bottom:1px solid rgba(154,
 .pastor-quote{position:absolute;bottom:-24px;right:-24px;background:var(--gold);color:#FAF9F7;padding:18px 22px;max-width:230px;font-family:'Cormorant Garamond',serif;font-size:13px;font-style:italic;font-weight:700;line-height:1.5;}
 .pastor-name{font-family:'Playfair Display',serif;font-size:44px;font-weight:900;margin-bottom:4px;}
 .pastor-title-tag{font-family:'Bebas Neue',sans-serif;letter-spacing:4px;color:var(--gold);font-size:13px;margin-bottom:28px;opacity:.9;}
+.pastor-roles{display:flex;flex-direction:column;gap:7px;margin:6px 0 28px;}
+.pastor-roles .role{font-family:'Inter',sans-serif;font-size:15px;color:var(--text-sub);line-height:1.4;letter-spacing:.2px;}
+.pastor-roles .role b{color:var(--gold);font-weight:700;}
+.pastor-roles .role .org{opacity:.85;}
 .pastor-info p{font-size:14px;line-height:1.9;color:var(--text-sub);opacity:.85;margin-bottom:18px;}
 .pastor-credentials{display:flex;flex-direction:column;gap:12px;margin-top:28px;}
 .cred-item{display:flex;gap:14px;align-items:flex-start;}
@@ -466,7 +470,11 @@ document.querySelectorAll('#main-nav .nav-links a').forEach(function(a){
     <div>
       <span class="section-label">About</span>
       <div class="pastor-name" id="pastor-name-display">Jikwon (Moses) Yu</div>
-      <div class="pastor-title-tag" style="line-height:1.95;">Lead Pastor · IM Friend Baptist Church<br>Faculty (ADVANCE) · Gateway Seminary<br>Director · Student Volunteer Movement (SVM)</div>
+      <div class="pastor-roles">
+        <div class="role"><b>Lead Pastor</b> <span class="org">· IM Friend Baptist Church</span></div>
+        <div class="role"><b>Faculty (ADVANCE)</b> <span class="org">· Gateway Seminary</span></div>
+        <div class="role"><b>Director</b> <span class="org">· Student Volunteer Movement (SVM)</span></div>
+      </div>
       <div class="section-divider"></div>
       <p id="pastor-bio-display">Pastor Moses Yu's journey began with a radical encounter with grace at the age of 22. Accepting Jesus as his personal Savior changed everything, igniting a passion to bring hope to hopeless youth. He dedicated his life to the path of an Educational Missionary.</p>
       <p>Today, Pastor Moses and his wife Juliet serve together in Bryan/College Station, raising the next generation of Kingdom leaders alongside their two daughters and one son.</p>
